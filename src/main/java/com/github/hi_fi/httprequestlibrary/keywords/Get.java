@@ -6,9 +6,8 @@ import org.robotframework.javalib.annotation.ArgumentNames;
 import org.robotframework.javalib.annotation.RobotKeyword;
 import org.robotframework.javalib.annotation.RobotKeywords;
 
-import com.github.hi_fi.httprequestlibrary.utils.Logger;
 import com.github.hi_fi.httprequestlibrary.utils.RestClient;
-import com.google.gson.Gson;
+import com.github.hi_fi.httprequestlibrary.utils.Robot;
 
 @RobotKeywords
 public class Get {
@@ -17,20 +16,7 @@ public class Get {
 	@ArgumentNames({"alias", "uri", "headers={}", "params={}", "allow_redirects=False", "timeout=0"})
 	public void getRequest(String alias, String uri, String...params) {
 		RestClient rc = new RestClient();
-		Map<String, String> paramList = this.getParamsValue(params, 1, "{}");
+		Map<String, String> paramList = Robot.getParamsValue(params, 1, "{}");
 		rc.makeGetRequest(alias, uri, paramList);
 	}
-	
-	private Map<String, String> getParamsValue(String[] params, int index, String defaultValue) {
-		String value = defaultValue;
-		if (params.length > index) {
-			value = params[index];
-		}
-		return this.parseRobotDictionary(value);
-	}
-	
-	private Map<String, String> parseRobotDictionary(String dictionary) {
-		return new Gson().fromJson(dictionary.replace("u'", "'"), Map.class);
-	}
-
 }
