@@ -79,92 +79,18 @@ public class RestClient {
 	}
 
 	private HttpClient createHttpClient(String verify) {
+		Security security = new Security();
 		HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
 		Logger.logDebug(String.format("Verify's class is %s, and value %s", verify.getClass(), verify));
 		if (new File(verify).exists()) {
 			Logger.logDebug("Loading custom keystore");
 			httpClientBuilder
-					.setSSLSocketFactory(this.allowAllCertificates(this.createCustomKeyStore(verify.toString())));
+					.setSSLSocketFactory(security.allowAllCertificates(security.createCustomKeyStore(verify.toString())));
 		} else if (!Boolean.parseBoolean(verify.toString())) {
 			Logger.logDebug("Allowing all certificates");
-			httpClientBuilder.setSSLSocketFactory(this.allowAllCertificates(null));
+			httpClientBuilder.setSSLSocketFactory(security.allowAllCertificates(null));
 		}
 		return httpClientBuilder.build();
-	}
-
-	private KeyStore createCustomKeyStore(String path) {
-		KeyStore trustStore;
-		try {
-			trustStore = KeyStore.getInstance(KeyStore.getDefaultType());
-			trustStore.load(null);
-			int i = 0;
-			for (X509Certificate cert : this.getCertificatesFromFile(path)) {
-				trustStore.setCertificateEntry("Custom_entry_" + i, cert);
-				i++;
-			}
-			Logger.logDebug("Certificates in trustStore: "+(i));
-			return trustStore;
-		} catch (KeyStoreException e) {
-			throw new RuntimeException(String.format("%s occurred. Error message: %s", e.getClass(), e.getMessage()));
-		} catch (NoSuchAlgorithmException e) {
-			throw new RuntimeException(String.format("%s occurred. Error message: %s", e.getClass(), e.getMessage()));
-		} catch (CertificateException e) {
-			throw new RuntimeException(String.format("%s occurred. Error message: %s", e.getClass(), e.getMessage()));
-		} catch (IOException e) {
-			throw new RuntimeException(String.format("%s occurred. Error message: %s", e.getClass(), e.getMessage()));
-		}
-
-	}
-
-	private List<X509Certificate> getCertificatesFromFile(String path) {
-		List<X509Certificate> certificateList = new ArrayList<X509Certificate>();
-		try {
-			String[] certificates = FileUtils.readFileToString(new File(path), "UTF-8")
-					.split("-----BEGIN CERTIFICATE-----");
-			certificates = Arrays.copyOfRange(certificates, 1, certificates.length);
-			for (String certificate : certificates) {
-				certificate = "-----BEGIN CERTIFICATE-----" + certificate.split("-----END CERTIFICATE-----")[0]
-						+ "-----END CERTIFICATE-----";
-				Logger.logTrace(certificate);
-				certificateList.add(this.generateCertificateFromDER(certificate.getBytes()));
-			}
-			return certificateList;
-
-		} catch (IOException e) {
-			throw new RuntimeException("Couldn't read certificates. Error: " + e.getMessage());
-		} catch (CertificateException e) {
-			throw new RuntimeException("Certificate generation failed. Error: " + e.getMessage());
-		}
-	}
-
-	private X509Certificate generateCertificateFromDER(byte[] certBytes) throws CertificateException {
-		CertificateFactory factory = CertificateFactory.getInstance("X.509");
-
-		return (X509Certificate) factory.generateCertificate(new ByteArrayInputStream(certBytes));
-	}
-
-	private SSLConnectionSocketFactory allowAllCertificates(KeyStore keyStore) {
-		SSLContextBuilder sshbuilder = new SSLContextBuilder();
-		TrustStrategy trustStrategy = new TrustSelfSignedStrategy();
-		HostnameVerifier hostnameVerifier = NoopHostnameVerifier.INSTANCE;
-		if (keyStore != null) {
-			trustStrategy = null;
-			hostnameVerifier = null;
-		}
-		try {
-			sshbuilder.loadTrustMaterial(keyStore, trustStrategy);
-		} catch (NoSuchAlgorithmException e) {
-			throw new RuntimeException(String.format("%s occurred. Error message: %s", e.getClass(), e.getMessage()));
-		} catch (KeyStoreException e) {
-			throw new RuntimeException(String.format("%s occurred. Error message: %s", e.getClass(), e.getMessage()));
-		}
-		try {
-			return new SSLConnectionSocketFactory(sshbuilder.build(), hostnameVerifier);
-		} catch (KeyManagementException e) {
-			throw new RuntimeException(String.format("%s occurred. Error message: %s", e.getClass(), e.getMessage()));
-		} catch (NoSuchAlgorithmException e) {
-			throw new RuntimeException(String.format("%s occurred. Error message: %s", e.getClass(), e.getMessage()));
-		}
 	}
 
 	private String buildUrl(String alias, String uri, Map<String, String> parameters) {
