@@ -33,6 +33,12 @@ Get HTTPS & Verify Cert with a CA bundle
     Get Request  httpbin  /get
     Response Code Should Be  httpbin  200
 
+Get HTTPS & Verify Cert with a CA bundle without correct certificate
+    [Tags]  get
+    Create Session    httpbin    https://httpbin.org   verify=${CURDIR}${/}single.pem
+    ${msg}    Run Keyword And Expect Error    *    Get Request  httpbin  /get
+    Should contain    ${msg}    unable to find valid certification    case_insensitive=True
+    
 Get With Auth
     [Tags]  get
     ${auth}=  Create List  user   passwd

@@ -14,10 +14,10 @@ public class Robot {
 		return parseRobotDictionary(value);
 	}
 	
-	public static Boolean getParamsValue(String[] params, int index, Boolean defaultValue) {
-		Boolean value = defaultValue;
+	public static Object getParamsValue(String[] params, int index, Object defaultValue) {
+		Object value = defaultValue;
 		if (params.length > index) {
-			value = Boolean.valueOf(params[index]);
+			value = params[index];
 		}
 		return value;
 	}
