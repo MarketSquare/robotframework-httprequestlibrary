@@ -1,41 +1,27 @@
 package com.github.hi_fi.httprequestlibrary.utils;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URLEncoder;
-import java.security.KeyManagementException;
-import java.security.KeyStore;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.cert.CertificateException;
-import java.security.cert.CertificateFactory;
-import java.security.cert.X509Certificate;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.net.ssl.HostnameVerifier;
-
-import org.apache.commons.io.FileUtils;
+import org.apache.http.HttpHost;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.CookieStore;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.protocol.HttpClientContext;
-import org.apache.http.conn.ssl.NoopHostnameVerifier;
-import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
-import org.apache.http.conn.ssl.TrustSelfSignedStrategy;
-import org.apache.http.conn.ssl.TrustStrategy;
+import org.apache.http.client.utils.URIUtils;
 import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HttpContext;
-import org.apache.http.ssl.SSLContextBuilder;
 
 import com.github.hi_fi.httprequestlibrary.domain.Session;
 
@@ -47,10 +33,16 @@ public class RestClient {
 		return sessions.get(alias);
 	}
 
-	public void createSession(String alias, String url, String verify) {
+	public void createSession(String alias, String url, List<String> auth, String verify) {
+		HttpHost target;
+		try {
+			target = URIUtils.extractHost(new URI(url));
+		} catch (URISyntaxException e) {
+			throw new RuntimeException("Parsing of URL failed. Error message: "+e.getMessage());
+		}
 		Session session = new Session();
-		session.setContext(this.createContext());
-		session.setClient(this.createHttpClient(verify));
+		session.setContext(this.createContext(auth, target));
+		session.setClient(this.createHttpClient(auth, verify, target));
 		session.setUrl(url);
 		sessions.put(alias, session);
 	}
@@ -71,24 +63,34 @@ public class RestClient {
 		}
 	}
 
-	private HttpContext createContext() {
-		HttpContext httpContext = new BasicHttpContext();
+	private HttpClientContext createContext(List<String> auth, HttpHost target) {
+		HttpClientContext httpClientContext = HttpClientContext.create();
 		CookieStore cookieStore = new BasicCookieStore();
-		httpContext.setAttribute(HttpClientContext.COOKIE_STORE, cookieStore);
-		return httpContext;
+		httpClientContext.setCookieStore(cookieStore);
+		if (auth.size() > 1) {
+			httpClientContext.setAuthCache(new Security().getAuthCache(target));
+		}
+		return httpClientContext;
 	}
 
-	private HttpClient createHttpClient(String verify) {
+	private HttpClient createHttpClient(List<String> auth, String verify, HttpHost target) {
 		Security security = new Security();
 		HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
-		Logger.logDebug(String.format("Verify's class is %s, and value %s", verify.getClass(), verify));
+
+		Logger.logDebug("Verify value: " + verify);
+		Logger.logDebug((new File(verify).getAbsolutePath()));
+
 		if (new File(verify).exists()) {
 			Logger.logDebug("Loading custom keystore");
-			httpClientBuilder
-					.setSSLSocketFactory(security.allowAllCertificates(security.createCustomKeyStore(verify.toString())));
+			httpClientBuilder.setSSLSocketFactory(
+					security.allowAllCertificates(security.createCustomKeyStore(verify.toString())));
 		} else if (!Boolean.parseBoolean(verify.toString())) {
 			Logger.logDebug("Allowing all certificates");
 			httpClientBuilder.setSSLSocketFactory(security.allowAllCertificates(null));
+		}
+		
+		if (auth.size() > 1) {
+			httpClientBuilder.setDefaultCredentialsProvider(security.getCredentialsProvider(auth.get(0), auth.get(1), target));
 		}
 		return httpClientBuilder.build();
 	}

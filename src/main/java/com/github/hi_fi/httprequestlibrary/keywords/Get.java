@@ -1,5 +1,6 @@
 package com.github.hi_fi.httprequestlibrary.keywords;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.robotframework.javalib.annotation.ArgumentNames;
@@ -16,7 +17,7 @@ public class Get {
 	@ArgumentNames({"alias", "uri", "headers={}", "params={}", "allow_redirects=False", "timeout=0"})
 	public void getRequest(String alias, String uri, String...params) {
 		RestClient rc = new RestClient();
-		Map<String, String> paramList = Robot.getParamsValue(params, 1, "{}");
+		Map<String, String> paramList = Robot.getParamsValue(params, 1, (Map<String, String>) new HashMap<String, String>());
 		rc.makeGetRequest(alias, uri, paramList);
 	}
 }

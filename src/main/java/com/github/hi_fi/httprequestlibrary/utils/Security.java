@@ -3,6 +3,8 @@ package com.github.hi_fi.httprequestlibrary.utils;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.security.KeyManagementException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
@@ -17,13 +19,36 @@ import java.util.List;
 import javax.net.ssl.HostnameVerifier;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.http.HttpHost;
+import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.client.AuthCache;
+import org.apache.http.client.CredentialsProvider;
 import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.conn.ssl.TrustSelfSignedStrategy;
 import org.apache.http.conn.ssl.TrustStrategy;
+import org.apache.http.impl.auth.BasicScheme;
+import org.apache.http.impl.client.BasicAuthCache;
+import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.ssl.SSLContextBuilder;
 
 public class Security {
+	
+	protected AuthCache getAuthCache(HttpHost target) {
+		AuthCache authCache = new BasicAuthCache();
+		BasicScheme basicAuth = new BasicScheme();
+        authCache.put(target, basicAuth);
+        return authCache;
+	}
+	
+	protected CredentialsProvider getCredentialsProvider(String username, String password, HttpHost target) {
+		CredentialsProvider credsProvider = new BasicCredentialsProvider();
+        credsProvider.setCredentials(
+                new AuthScope(target.getHostName(), target.getPort()),
+                new UsernamePasswordCredentials(username, password));
+        return credsProvider;
+	}
 	
 	protected KeyStore createCustomKeyStore(String path) {
 		KeyStore trustStore;

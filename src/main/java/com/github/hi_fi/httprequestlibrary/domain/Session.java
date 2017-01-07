@@ -5,13 +5,13 @@ import java.io.IOException;
 import org.apache.http.HttpResponse;
 import org.apache.http.ParseException;
 import org.apache.http.client.HttpClient;
-import org.apache.http.protocol.HttpContext;
+import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.util.EntityUtils;
 
 public class Session {
 	private String alias;
 	private String url;
-	private HttpContext context;
+	private HttpClientContext context;
 	private HttpClient client;
 	private HttpResponse response;
 	private String responseBody;
@@ -24,11 +24,11 @@ public class Session {
 		this.alias = alias;
 	}
 
-	public HttpContext getContext() {
+	public HttpClientContext getContext() {
 		return context;
 	}
 
-	public void setContext(HttpContext context) {
+	public void setContext(HttpClientContext context) {
 		this.context = context;
 	}
 
