@@ -13,7 +13,7 @@ public class Robot {
 		String givenValue = null;
 		if (params.length > index) {
 			givenValue = params[index];
-			Logger.logDebug("Value from arguments: " + givenValue);
+			Logger.debug("Value from arguments: " + givenValue);
 		}
 
 		if (givenValue != null && !givenValue.equals("None")) {

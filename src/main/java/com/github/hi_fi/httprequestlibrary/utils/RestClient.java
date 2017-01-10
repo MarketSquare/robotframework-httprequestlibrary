@@ -7,7 +7,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLEncoder;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.http.HttpHost;
@@ -20,9 +19,8 @@ import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.client.utils.URIUtils;
 import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.protocol.BasicHttpContext;
-import org.apache.http.protocol.HttpContext;
 
+import com.github.hi_fi.httprequestlibrary.domain.Authentication;
 import com.github.hi_fi.httprequestlibrary.domain.Session;
 
 public class RestClient {
@@ -33,7 +31,10 @@ public class RestClient {
 		return sessions.get(alias);
 	}
 
-	public void createSession(String alias, String url, List<String> auth, String verify) {
+	public void createSession(String alias, String url, Authentication auth, String verify) {
+		System.setProperty("org.apache.commons.logging.Log", "org.apache.commons.logging.impl.SimpleLog");
+		System.setProperty("org.apache.commons.logging.simplelog.showdatetime", "true");
+		System.setProperty("org.apache.commons.logging.simplelog.log.org.apache.http", "DEBUG");
 		HttpHost target;
 		try {
 			target = URIUtils.extractHost(new URI(url));
@@ -63,34 +64,34 @@ public class RestClient {
 		}
 	}
 
-	private HttpClientContext createContext(List<String> auth, HttpHost target) {
+	private HttpClientContext createContext(Authentication auth, HttpHost target) {
 		HttpClientContext httpClientContext = HttpClientContext.create();
 		CookieStore cookieStore = new BasicCookieStore();
 		httpClientContext.setCookieStore(cookieStore);
-		if (auth.size() > 1) {
-			httpClientContext.setAuthCache(new Security().getAuthCache(target));
+		if (auth.isAuthenticable()) {
+			httpClientContext.setAuthCache(new Security().getAuthCache(auth, target));
 		}
 		return httpClientContext;
 	}
 
-	private HttpClient createHttpClient(List<String> auth, String verify, HttpHost target) {
+	private HttpClient createHttpClient(Authentication auth, String verify, HttpHost target) {
 		Security security = new Security();
 		HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
 
-		Logger.logDebug("Verify value: " + verify);
-		Logger.logDebug((new File(verify).getAbsolutePath()));
+		Logger.debug("Verify value: " + verify);
+		Logger.debug((new File(verify).getAbsolutePath()));
 
 		if (new File(verify).exists()) {
-			Logger.logDebug("Loading custom keystore");
+			Logger.debug("Loading custom keystore");
 			httpClientBuilder.setSSLSocketFactory(
 					security.allowAllCertificates(security.createCustomKeyStore(verify.toString())));
 		} else if (!Boolean.parseBoolean(verify.toString())) {
-			Logger.logDebug("Allowing all certificates");
+			Logger.debug("Allowing all certificates");
 			httpClientBuilder.setSSLSocketFactory(security.allowAllCertificates(null));
 		}
 		
-		if (auth.size() > 1) {
-			httpClientBuilder.setDefaultCredentialsProvider(security.getCredentialsProvider(auth.get(0), auth.get(1), target));
+		if (auth.isAuthenticable()) {
+			httpClientBuilder.setDefaultCredentialsProvider(security.getCredentialsProvider(auth, target));
 		}
 		return httpClientBuilder.build();
 	}

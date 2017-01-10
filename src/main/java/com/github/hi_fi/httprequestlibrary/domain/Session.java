@@ -2,6 +2,7 @@ package com.github.hi_fi.httprequestlibrary.domain;
 
 import java.io.IOException;
 
+import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
 import org.apache.http.ParseException;
 import org.apache.http.client.HttpClient;
@@ -15,6 +16,8 @@ public class Session {
 	private HttpClient client;
 	private HttpResponse response;
 	private String responseBody;
+	private Authentication authentication;
+	private HttpHost httpHost;
 
 	public String getAlias() {
 		return alias;
@@ -72,5 +75,21 @@ public class Session {
 		if (url.endsWith("/")) {
 			this.url = url.substring(0, url.length()-1);
 		}
+	}
+
+	public Authentication getAuthentication() {
+		return authentication;
+	}
+
+	public void setAuthentication(Authentication authentication) {
+		this.authentication = authentication;
+	}
+
+	public HttpHost getHttpHost() {
+		return httpHost;
+	}
+
+	public void setHttpHost(HttpHost httpHost) {
+		this.httpHost = httpHost;
 	}
 }

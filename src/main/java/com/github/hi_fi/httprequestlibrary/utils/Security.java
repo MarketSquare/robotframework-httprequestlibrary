@@ -20,33 +20,53 @@ import javax.net.ssl.HostnameVerifier;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.http.HttpHost;
+import org.apache.http.auth.AuthScheme;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.AuthCache;
 import org.apache.http.client.CredentialsProvider;
+import org.apache.http.client.config.AuthSchemes;
 import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.conn.ssl.TrustSelfSignedStrategy;
 import org.apache.http.conn.ssl.TrustStrategy;
 import org.apache.http.impl.auth.BasicScheme;
+import org.apache.http.impl.auth.DigestScheme;
 import org.apache.http.impl.client.BasicAuthCache;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.ssl.SSLContextBuilder;
 
+import com.github.hi_fi.httprequestlibrary.domain.Authentication;
+
 public class Security {
 	
-	protected AuthCache getAuthCache(HttpHost target) {
+	protected AuthCache getAuthCache(Authentication auth, HttpHost target) {
 		AuthCache authCache = new BasicAuthCache();
-		BasicScheme basicAuth = new BasicScheme();
-        authCache.put(target, basicAuth);
+		AuthScheme authScheme = null;
+		switch (auth.getType()) {
+		case BASIC:
+			authScheme = new BasicScheme();
+			break;
+		case DIGEST:
+			authScheme = new DigestScheme();
+			break;
+		case NTLM:
+			break;
+		}
+
+        authCache.put(target, authScheme);
         return authCache;
 	}
 	
-	protected CredentialsProvider getCredentialsProvider(String username, String password, HttpHost target) {
+	protected CredentialsProvider getCredentialsProvider(Authentication auth, HttpHost target) {
 		CredentialsProvider credsProvider = new BasicCredentialsProvider();
+		AuthScope authScope = null;
+
+		authScope = new AuthScope(target.getHostName(), target.getPort());
+
         credsProvider.setCredentials(
-                new AuthScope(target.getHostName(), target.getPort()),
-                new UsernamePasswordCredentials(username, password));
+                authScope,
+                new UsernamePasswordCredentials(auth.getUsername(), auth.getPassword()));
         return credsProvider;
 	}
 	
@@ -60,7 +80,7 @@ public class Security {
 				trustStore.setCertificateEntry("Custom_entry_" + i, cert);
 				i++;
 			}
-			Logger.logDebug("Certificates in trustStore: "+(i));
+			Logger.debug("Certificates in trustStore: "+(i));
 			return trustStore;
 		} catch (KeyStoreException e) {
 			throw new RuntimeException(String.format("%s occurred. Error message: %s", e.getClass(), e.getMessage()));
@@ -83,7 +103,7 @@ public class Security {
 			for (String certificate : certificates) {
 				certificate = "-----BEGIN CERTIFICATE-----" + certificate.split("-----END CERTIFICATE-----")[0]
 						+ "-----END CERTIFICATE-----";
-				Logger.logTrace(certificate);
+				Logger.trace(certificate);
 				certificateList.add(this.generateCertificateFromDER(certificate.getBytes()));
 			}
 			return certificateList;
