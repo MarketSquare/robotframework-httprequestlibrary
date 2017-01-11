@@ -8,12 +8,14 @@ import com.google.gson.Gson;
 
 public class Robot {
 
+	static RobotLogger logger = new RobotLogger();
+	
 	public static <T> T getParamsValue(String[] params, int index, T defaultValue) {
 		T value = defaultValue;
 		String givenValue = null;
 		if (params.length > index) {
 			givenValue = params[index];
-			Logger.debug("Value from arguments: " + givenValue);
+			logger.debug("Value from arguments: " + givenValue);
 		}
 
 		if (givenValue != null && !givenValue.equals("None")) {

@@ -40,6 +40,8 @@ import com.github.hi_fi.httprequestlibrary.domain.Authentication;
 
 public class Security {
 	
+	RobotLogger logger = new RobotLogger();
+	
 	protected AuthCache getAuthCache(Authentication auth, HttpHost target) {
 		AuthCache authCache = new BasicAuthCache();
 		AuthScheme authScheme = null;
@@ -60,12 +62,9 @@ public class Security {
 	
 	protected CredentialsProvider getCredentialsProvider(Authentication auth, HttpHost target) {
 		CredentialsProvider credsProvider = new BasicCredentialsProvider();
-		AuthScope authScope = null;
-
-		authScope = new AuthScope(target.getHostName(), target.getPort());
 
         credsProvider.setCredentials(
-                authScope,
+        		new AuthScope(target.getHostName(), target.getPort()),
                 new UsernamePasswordCredentials(auth.getUsername(), auth.getPassword()));
         return credsProvider;
 	}
@@ -80,7 +79,7 @@ public class Security {
 				trustStore.setCertificateEntry("Custom_entry_" + i, cert);
 				i++;
 			}
-			Logger.debug("Certificates in trustStore: "+(i));
+			logger.debug("Certificates in trustStore: "+(i));
 			return trustStore;
 		} catch (KeyStoreException e) {
 			throw new RuntimeException(String.format("%s occurred. Error message: %s", e.getClass(), e.getMessage()));
@@ -103,7 +102,7 @@ public class Security {
 			for (String certificate : certificates) {
 				certificate = "-----BEGIN CERTIFICATE-----" + certificate.split("-----END CERTIFICATE-----")[0]
 						+ "-----END CERTIFICATE-----";
-				Logger.trace(certificate);
+				logger.trace(certificate);
 				certificateList.add(this.generateCertificateFromDER(certificate.getBytes()));
 			}
 			return certificateList;

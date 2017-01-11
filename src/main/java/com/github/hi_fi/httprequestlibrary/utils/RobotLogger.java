@@ -1,10 +1,18 @@
 package com.github.hi_fi.httprequestlibrary.utils;
 
+import java.io.Serializable;
+
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.commons.logging.Log;
 
-public class Logger implements Log {
+
+public class RobotLogger implements Log, Serializable {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 3269522167427538736L;
+
 	public static void logHTML(Object log) {
 		System.out.println("*HTML* "+log);
 	}

@@ -25,6 +25,7 @@ import com.github.hi_fi.httprequestlibrary.domain.Session;
 
 public class RestClient {
 
+	RobotLogger logger = new RobotLogger();
 	private static Map<String, Session> sessions = new HashMap<String, Session>();
 
 	public Session getSession(String alias) {
@@ -32,9 +33,6 @@ public class RestClient {
 	}
 
 	public void createSession(String alias, String url, Authentication auth, String verify) {
-		System.setProperty("org.apache.commons.logging.Log", "org.apache.commons.logging.impl.SimpleLog");
-		System.setProperty("org.apache.commons.logging.simplelog.showdatetime", "true");
-		System.setProperty("org.apache.commons.logging.simplelog.log.org.apache.http", "DEBUG");
 		HttpHost target;
 		try {
 			target = URIUtils.extractHost(new URI(url));
@@ -78,15 +76,15 @@ public class RestClient {
 		Security security = new Security();
 		HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
 
-		Logger.debug("Verify value: " + verify);
-		Logger.debug((new File(verify).getAbsolutePath()));
+		logger.debug("Verify value: " + verify);
+		logger.debug((new File(verify).getAbsolutePath()));
 
 		if (new File(verify).exists()) {
-			Logger.debug("Loading custom keystore");
+			logger.debug("Loading custom keystore");
 			httpClientBuilder.setSSLSocketFactory(
 					security.allowAllCertificates(security.createCustomKeyStore(verify.toString())));
 		} else if (!Boolean.parseBoolean(verify.toString())) {
-			Logger.debug("Allowing all certificates");
+			logger.debug("Allowing all certificates");
 			httpClientBuilder.setSSLSocketFactory(security.allowAllCertificates(null));
 		}
 		
