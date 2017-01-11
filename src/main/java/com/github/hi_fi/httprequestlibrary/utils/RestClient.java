@@ -6,19 +6,29 @@ import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
+import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
+import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.CookieStore;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.client.utils.URIUtils;
+import org.apache.http.entity.BasicHttpEntity;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.message.BasicNameValuePair;
 
 import com.github.hi_fi.httprequestlibrary.domain.Authentication;
 import com.github.hi_fi.httprequestlibrary.domain.Session;
@@ -37,7 +47,7 @@ public class RestClient {
 		try {
 			target = URIUtils.extractHost(new URI(url));
 		} catch (URISyntaxException e) {
-			throw new RuntimeException("Parsing of URL failed. Error message: "+e.getMessage());
+			throw new RuntimeException("Parsing of URL failed. Error message: " + e.getMessage());
 		}
 		Session session = new Session();
 		session.setContext(this.createContext(auth, target));
@@ -50,6 +60,31 @@ public class RestClient {
 		HttpGet getRequest = new HttpGet(this.buildUrl(alias, uri, parameters));
 		Session session = this.getSession(alias);
 		this.makeRequest(getRequest, session);
+	}
+
+	public void makePostRequest(String alias, String uri, Object data, Map<String, String> parameters) {
+		HttpPost postRequest = new HttpPost(this.buildUrl(alias, uri, parameters));
+		if (data.toString().length() > 0) {
+			postRequest.setEntity(this.createDataEntity(data));
+		}
+		Session session = this.getSession(alias);
+		this.makeRequest(postRequest, session);
+	}
+
+	private HttpEntity createDataEntity(Object data) {
+		try {
+			if (data instanceof Map) {
+				List<NameValuePair> params = new ArrayList<NameValuePair>(2);
+				for (Entry<String, String> entry : ((Map<String, String>) data).entrySet()) {
+					params.add(new BasicNameValuePair(entry.getKey(), entry.getValue()));
+				}
+				return new UrlEncodedFormEntity(params, "UTF-8");
+			} else {
+				return new StringEntity(data.toString());
+			}
+		} catch (UnsupportedEncodingException e) {
+			throw new RuntimeException("Unsupported encoding noticed. Error message: " + e.getMessage());
+		}
 	}
 
 	private void makeRequest(HttpUriRequest request, Session session) {
@@ -87,7 +122,7 @@ public class RestClient {
 			logger.debug("Allowing all certificates");
 			httpClientBuilder.setSSLSocketFactory(security.allowAllCertificates(null));
 		}
-		
+
 		if (auth.isAuthenticable()) {
 			httpClientBuilder.setDefaultCredentialsProvider(security.getCredentialsProvider(auth, target));
 		}
