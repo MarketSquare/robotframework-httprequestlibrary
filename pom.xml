@@ -225,14 +225,6 @@
 							<extraPathDirectories>
 								<extraPathDirectory>target/httprequestlibrary-${project.version}.jar</extraPathDirectory>
 							</extraPathDirectories>
-							<variables>
-								<variable>maven.runtime.classpath:${maven.runtime.classpath}</variable>
-								<variable>maven.test.classpath:${maven.test.classpath}</variable>
-								<classpath />
-							</variables>
-							<tests>
-								<test>*Digest*</test>
-							</tests>
 						</configuration>
 					</execution>
 					<execution>
