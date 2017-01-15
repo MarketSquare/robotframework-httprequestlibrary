@@ -47,3 +47,18 @@ Get With Auth
     Response Code Should Be  httpbin  200
     ${jsondata}=  Get JSON Response  httpbin
     Should Be Equal As Strings  ${jsondata['authenticated']}  True
+    
+Get Request With Redirection
+    [Tags]  get
+    Create Session  httpbin  http://httpbin.org    debug=3
+    Get Request  httpbin  /redirect/1
+    Response Code Should Be  httpbin  200
+    Get Request  httpbin  /redirect/1  allow_redirects=${true}
+    Response Code Should Be  httpbin  200
+
+Get Request Without Redirection
+    [Tags]  get
+    Create Session  httpbin  http://httpbin.org
+    Get Request  httpbin  /redirect/1  allow_redirects=${false}
+    ${status}=  Get Response Status Code    httpbin
+    Should Be True    300 <= ${status} < 310

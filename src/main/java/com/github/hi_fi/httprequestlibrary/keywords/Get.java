@@ -14,10 +14,11 @@ import com.github.hi_fi.httprequestlibrary.utils.Robot;
 public class Get {
 	
 	@RobotKeyword
-	@ArgumentNames({"alias", "uri", "headers={}", "params={}", "allow_redirects=False", "timeout=0"})
+	@ArgumentNames({"alias", "uri", "headers={}", "params={}", "allow_redirects=true", "timeout=0"})
 	public void getRequest(String alias, String uri, String...params) {
 		RestClient rc = new RestClient();
+		Boolean allowRedirects = Boolean.parseBoolean(Robot.getParamsValue(params, 2, "true"));
 		Map<String, String> paramList = Robot.getParamsValue(params, 1, (Map<String, String>) new HashMap<String, String>());
-		rc.makeGetRequest(alias, uri, paramList);
+		rc.makeGetRequest(alias, uri, paramList, allowRedirects);
 	}
 }

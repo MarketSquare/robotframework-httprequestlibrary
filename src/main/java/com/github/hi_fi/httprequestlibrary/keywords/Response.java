@@ -20,5 +20,10 @@ public class Response {
 		Map jsonJavaRootObject = new Gson().fromJson(session.getResponseBody(), Map.class);
 		return jsonJavaRootObject;
 	}
+	
+	@RobotKeyword
+	public Integer getResponseStatusCode(String alias) {
+		return new RestClient().getSession(alias).getResponse().getStatusLine().getStatusCode();
+	}
 
 }

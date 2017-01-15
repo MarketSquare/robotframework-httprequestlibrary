@@ -57,8 +57,9 @@ public class RestClient {
 		sessions.put(alias, session);
 	}
 
-	public void makeGetRequest(String alias, String uri, Map<String, String> parameters) {
+	public void makeGetRequest(String alias, String uri, Map<String, String> parameters, boolean allowRedirects) {
 		HttpGet getRequest = new HttpGet(this.buildUrl(alias, uri, parameters));
+		getRequest.setConfig(RequestConfig.custom().setRedirectsEnabled(allowRedirects).build());
 		Session session = this.getSession(alias);
 		this.makeRequest(getRequest, session);
 	}
@@ -92,6 +93,7 @@ public class RestClient {
 	private void makeRequest(HttpUriRequest request, Session session) {
 		try {
 			session.setResponse(session.getClient().execute(request, session.getContext()));
+			logger.debug(session.getResponse().getStatusLine());
 		} catch (ClientProtocolException e) {
 			throw new RuntimeException("Client protocol Exception. Message: " + e.getMessage());
 		} catch (IOException e) {
