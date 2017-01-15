@@ -9,6 +9,7 @@ public class Authentication {
 	private String domain;
 	private Type type;
 	private Boolean authenticable = false;
+	private Boolean preemptiveAuthentication = false;
 	
 	public enum Type {
 		BASIC, DIGEST, NTLM
@@ -70,6 +71,10 @@ public class Authentication {
 
 	public Boolean isAuthenticable() {
 		return authenticable;
+	}
+
+	public Boolean usePreemptiveAuthentication() {
+		return preemptiveAuthentication;
 	}
 
 }

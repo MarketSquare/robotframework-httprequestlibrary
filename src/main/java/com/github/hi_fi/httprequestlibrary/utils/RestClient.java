@@ -18,13 +18,14 @@ import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.CookieStore;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.config.CookieSpecs;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.client.utils.URIUtils;
-import org.apache.http.entity.BasicHttpEntity;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.HttpClientBuilder;
@@ -71,6 +72,7 @@ public class RestClient {
 		this.makeRequest(postRequest, session);
 	}
 
+	@SuppressWarnings("unchecked")
 	private HttpEntity createDataEntity(Object data) {
 		try {
 			if (data instanceof Map) {
@@ -101,8 +103,8 @@ public class RestClient {
 		HttpClientContext httpClientContext = HttpClientContext.create();
 		CookieStore cookieStore = new BasicCookieStore();
 		httpClientContext.setCookieStore(cookieStore);
-		if (auth.isAuthenticable()) {
-			httpClientContext.setAuthCache(new Security().getAuthCache(auth, target));
+		if (auth.usePreemptiveAuthentication()) {
+	        httpClientContext.setAuthCache(new Security().getAuthCache(auth, target));
 		}
 		return httpClientContext;
 	}
@@ -126,6 +128,10 @@ public class RestClient {
 		if (auth.isAuthenticable()) {
 			httpClientBuilder.setDefaultCredentialsProvider(security.getCredentialsProvider(auth, target));
 		}
+		
+	    RequestConfig requestConfig = RequestConfig.custom().setCookieSpec(CookieSpecs.DEFAULT).build();
+	    httpClientBuilder.setDefaultRequestConfig(requestConfig);
+		
 		return httpClientBuilder.build();
 	}
 

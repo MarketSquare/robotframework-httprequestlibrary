@@ -47,12 +47,3 @@ Get With Auth
     Response Code Should Be  httpbin  200
     ${jsondata}=  Get JSON Response  httpbin
     Should Be Equal As Strings  ${jsondata['authenticated']}  True
-
-Get With Digest Auth
-    [Tags]    get
-    ${auth}=    Create List    user    passwd
-    Create Digest Session    httpbin    https://httpbin.org    auth=${auth}    debug=3
-    Get Request    httpbin    /digest-auth/auth/user/passwd
-    Response Code Should Be  httpbin  200
-    ${jsondata}=  Get JSON Response  httpbin
-    Should Be Equal As Strings    ${jsondata['authenticated']}    True
