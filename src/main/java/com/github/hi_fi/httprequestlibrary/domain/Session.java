@@ -2,19 +2,22 @@ package com.github.hi_fi.httprequestlibrary.domain;
 
 import java.io.IOException;
 
+import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
 import org.apache.http.ParseException;
 import org.apache.http.client.HttpClient;
-import org.apache.http.protocol.HttpContext;
+import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.util.EntityUtils;
 
 public class Session {
 	private String alias;
 	private String url;
-	private HttpContext context;
+	private HttpClientContext context;
 	private HttpClient client;
 	private HttpResponse response;
 	private String responseBody;
+	private Authentication authentication;
+	private HttpHost httpHost;
 
 	public String getAlias() {
 		return alias;
@@ -24,11 +27,11 @@ public class Session {
 		this.alias = alias;
 	}
 
-	public HttpContext getContext() {
+	public HttpClientContext getContext() {
 		return context;
 	}
 
-	public void setContext(HttpContext context) {
+	public void setContext(HttpClientContext context) {
 		this.context = context;
 	}
 
@@ -72,5 +75,21 @@ public class Session {
 		if (url.endsWith("/")) {
 			this.url = url.substring(0, url.length()-1);
 		}
+	}
+
+	public Authentication getAuthentication() {
+		return authentication;
+	}
+
+	public void setAuthentication(Authentication authentication) {
+		this.authentication = authentication;
+	}
+
+	public HttpHost getHttpHost() {
+		return httpHost;
+	}
+
+	public void setHttpHost(HttpHost httpHost) {
+		this.httpHost = httpHost;
 	}
 }

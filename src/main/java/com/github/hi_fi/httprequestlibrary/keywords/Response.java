@@ -5,7 +5,7 @@ import java.util.Map;
 import org.robotframework.javalib.annotation.RobotKeyword;
 import org.robotframework.javalib.annotation.RobotKeywords;
 import com.github.hi_fi.httprequestlibrary.domain.Session;
-import com.github.hi_fi.httprequestlibrary.utils.Logger;
+import com.github.hi_fi.httprequestlibrary.utils.RobotLogger;
 import com.github.hi_fi.httprequestlibrary.utils.RestClient;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;

@@ -11,13 +11,19 @@ import com.github.hi_fi.httprequestlibrary.utils.RestClient;
 import com.github.hi_fi.httprequestlibrary.utils.Robot;
 
 @RobotKeywords
-public class Get {
+public class Post {
 	
 	@RobotKeyword
-	@ArgumentNames({"alias", "uri", "headers={}", "params={}", "allow_redirects=False", "timeout=0"})
-	public void getRequest(String alias, String uri, String...params) {
+	@ArgumentNames({"alias", "uri", "data={}", "params={}", "headers={}", "files=", "allow_redirects=False", "timeout=0"})
+	public void postRequest(String alias, String uri, String...params) {
 		RestClient rc = new RestClient();
+		Object dataList = "";
+		try {
+			dataList = Robot.getParamsValue(params, 0, (Map<String, String>) new HashMap<String, String>());
+		} catch (Exception e) {
+			dataList = Robot.getParamsValue(params, 0, "");
+		}
 		Map<String, String> paramList = Robot.getParamsValue(params, 1, (Map<String, String>) new HashMap<String, String>());
-		rc.makeGetRequest(alias, uri, paramList);
+		rc.makePostRequest(alias, uri, dataList, paramList);
 	}
 }

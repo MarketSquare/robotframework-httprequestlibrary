@@ -1,0 +1,5 @@
+language: java
+## No installation
+install: true
+## Run Integration tests
+script: "mvn test && mvn verify"
