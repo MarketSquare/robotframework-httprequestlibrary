@@ -8,7 +8,7 @@ import com.google.gson.Gson;
 
 public class Robot {
 
-	static RobotLogger logger = new RobotLogger();
+	static RobotLogger logger = new RobotLogger("Robot");
 	
 	public static <T> T getParamsValue(String[] params, int index, T defaultValue) {
 		T value = defaultValue;

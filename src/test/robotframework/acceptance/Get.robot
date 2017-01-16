@@ -6,59 +6,53 @@ Get Requests
     [Tags]  get
     Create Session  google  http://www.google.com
     Create Session  github  https://api.github.com
-    Get Request  google  /
-    Response Code Should Be  google  200
-    Get Request  github  /users/bulkan
-    Response Code Should Be  github  200
-    Response Should Contain  github  Bulkan Evcimen
+    ${resp}=  Get Request  google  /
+    Should Be Equal As Strings  ${resp.status_code}  200
+    ${resp}=  Get Request  github  /users/bulkan
+    Should Be Equal As Strings  ${resp.status_code}  200
+    Dictionary Should Contain Value  ${resp.json}  Bulkan Evcimen
 
 Get Requests with Url Parameters
     [Tags]  get
     Create Session  httpbin     http://httpbin.org
     &{params}=   Create Dictionary   key=value     key2=value2
-    Get Request  httpbin  /get    params=${params}
-    Response Code Should Be  httpbin  200
-    ${jsondata}=  Get JSON Response  httpbin
+    ${resp}=     Get Request  httpbin  /get    params=${params}
+    Should Be Equal As Strings  ${resp.status_code}  200
+    ${jsondata}=  To Json  ${resp.content}
     Should be Equal     ${jsondata['args']}     ${params}
 
 Get HTTPS & Verify Cert
     [Tags]  get
     Create Session    httpbin    https://httpbin.org   verify=True
-    Get Request  httpbin  /get
-    Response Code Should Be  httpbin  200
-    
+    ${resp}=  Get Request  httpbin  /get
+    Should Be Equal As Strings  ${resp.status_code}  200
+
 Get HTTPS & Verify Cert with a CA bundle
     [Tags]  get
     Create Session    httpbin    https://httpbin.org   verify=${CURDIR}${/}cacert.pem
-    Get Request  httpbin  /get
-    Response Code Should Be  httpbin  200
+    ${resp}=  Get Request  httpbin  /get
+    Should Be Equal As Strings  ${resp.status_code}  200
 
-Get HTTPS & Verify Cert with a CA bundle without correct certificate
-    [Tags]  get
-    Create Session    httpbin    https://httpbin.org   verify=${CURDIR}${/}single.pem
-    ${msg}    Run Keyword And Expect Error    *    Get Request  httpbin  /get
-    Should contain    ${msg}    unable to find valid certification    case_insensitive=True
-    
 Get With Auth
     [Tags]  get
     ${auth}=  Create List  user   passwd
     Create Session    httpbin    https://httpbin.org     auth=${auth}
-    Get Request  httpbin  /basic-auth/user/passwd
-    Response Code Should Be  httpbin  200
-    ${jsondata}=  Get JSON Response  httpbin
-    Should Be Equal As Strings  ${jsondata['authenticated']}  True
-    
+    ${resp}=  Get Request  httpbin  /basic-auth/user/passwd
+    Should Be Equal As Strings  ${resp.status_code}  200
+    Should Be Equal As Strings  ${resp.json['authenticated']}  True
+
 Get Request With Redirection
     [Tags]  get
-    Create Session  httpbin  http://httpbin.org    debug=3
-    Get Request  httpbin  /redirect/1
-    Response Code Should Be  httpbin  200
-    Get Request  httpbin  /redirect/1  allow_redirects=${true}
-    Response Code Should Be  httpbin  200
+    Create Session  httpbin  http://httpbin.org    debug=True
+    ${resp}=  Get Request  httpbin  /redirect/1
+    Should Be Equal As Strings  ${resp.status_code}  200
+
+    ${resp}=  Get Request  httpbin  /redirect/1  allow_redirects=${true}
+    Should Be Equal As Strings  ${resp.status_code}  200
 
 Get Request Without Redirection
     [Tags]  get
     Create Session  httpbin  http://httpbin.org
-    Get Request  httpbin  /redirect/1  allow_redirects=${false}
-    ${status}=  Get Response Status Code    httpbin
-    Should Be True    300 <= ${status} < 310
+    ${resp}=  Get Request  httpbin  /redirect/1  allow_redirects=${false}
+    ${status}=  Convert To String  ${resp.status_code}
+    Should Start With  ${status}  30

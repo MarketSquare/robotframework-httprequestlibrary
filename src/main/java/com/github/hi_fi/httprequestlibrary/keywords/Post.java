@@ -7,6 +7,7 @@ import org.robotframework.javalib.annotation.ArgumentNames;
 import org.robotframework.javalib.annotation.RobotKeyword;
 import org.robotframework.javalib.annotation.RobotKeywords;
 
+import com.github.hi_fi.httprequestlibrary.domain.ResponseData;
 import com.github.hi_fi.httprequestlibrary.utils.RestClient;
 import com.github.hi_fi.httprequestlibrary.utils.Robot;
 
@@ -15,7 +16,7 @@ public class Post {
 	
 	@RobotKeyword
 	@ArgumentNames({"alias", "uri", "data={}", "params={}", "headers={}", "files=", "allow_redirects=False", "timeout=0"})
-	public void postRequest(String alias, String uri, String...params) {
+	public ResponseData postRequest(String alias, String uri, String...params) {
 		RestClient rc = new RestClient();
 		Object dataList = "";
 		try {
@@ -25,5 +26,6 @@ public class Post {
 		}
 		Map<String, String> paramList = Robot.getParamsValue(params, 1, (Map<String, String>) new HashMap<String, String>());
 		rc.makePostRequest(alias, uri, dataList, paramList);
+		return rc.getSession(alias).getResponseData();
 	}
 }

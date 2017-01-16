@@ -15,6 +15,7 @@ import java.util.Map.Entry;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
 import org.apache.http.NameValuePair;
+import org.apache.http.auth.AuthProtocolState;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.CookieStore;
 import org.apache.http.client.HttpClient;
@@ -36,14 +37,18 @@ import com.github.hi_fi.httprequestlibrary.domain.Session;
 
 public class RestClient {
 
-	RobotLogger logger = new RobotLogger();
+	RobotLogger logger = new RobotLogger("RestClient");
 	private static Map<String, Session> sessions = new HashMap<String, Session>();
 
 	public Session getSession(String alias) {
 		return sessions.get(alias);
 	}
 
-	public void createSession(String alias, String url, Authentication auth, String verify) {
+	public void createSession(String alias, String url, Authentication auth, String verify, Boolean debug) {
+		if (debug) {
+			System.setProperty("org.apache.commons.logging.Log","com.github.hi_fi.httprequestlibrary.utils.RobotLogger");
+			System.setProperty("org.apache.commons.logging.robotlogger.log.org.apache.http",debug ? "DEBUG" : "INFO");
+		}
 		HttpHost target;
 		try {
 			target = URIUtils.extractHost(new URI(url));
@@ -93,7 +98,6 @@ public class RestClient {
 	private void makeRequest(HttpUriRequest request, Session session) {
 		try {
 			session.setResponse(session.getClient().execute(request, session.getContext()));
-			logger.debug(session.getResponse().getStatusLine());
 		} catch (ClientProtocolException e) {
 			throw new RuntimeException("Client protocol Exception. Message: " + e.getMessage());
 		} catch (IOException e) {
