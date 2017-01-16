@@ -20,7 +20,8 @@ public class Get {
 		RestClient rc = new RestClient();
 		Boolean allowRedirects = Boolean.parseBoolean(Robot.getParamsValue(params, 2, "true"));
 		Map<String, String> paramList = Robot.getParamsValue(params, 1, (Map<String, String>) new HashMap<String, String>());
-		rc.makeGetRequest(alias, uri, paramList, allowRedirects);
+		Map<String, String> headers = Robot.getParamsValue(params, 0, (Map<String, String>) new HashMap<String, String>());
+		rc.makeGetRequest(alias, uri, headers, paramList, allowRedirects);
 		return rc.getSession(alias).getResponseData();
 	}
 }

@@ -14,6 +14,8 @@ import java.util.Map.Entry;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
+import org.apache.http.HttpMessage;
+import org.apache.http.HttpRequest;
 import org.apache.http.NameValuePair;
 import org.apache.http.auth.AuthProtocolState;
 import org.apache.http.client.ClientProtocolException;
@@ -30,6 +32,7 @@ import org.apache.http.client.utils.URIUtils;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.impl.client.LaxRedirectStrategy;
 import org.apache.http.message.BasicNameValuePair;
 
 import com.github.hi_fi.httprequestlibrary.domain.Authentication;
@@ -46,8 +49,9 @@ public class RestClient {
 
 	public void createSession(String alias, String url, Authentication auth, String verify, Boolean debug) {
 		if (debug) {
-			System.setProperty("org.apache.commons.logging.Log","com.github.hi_fi.httprequestlibrary.utils.RobotLogger");
-			System.setProperty("org.apache.commons.logging.robotlogger.log.org.apache.http",debug ? "DEBUG" : "INFO");
+			System.setProperty("org.apache.commons.logging.Log",
+					"com.github.hi_fi.httprequestlibrary.utils.RobotLogger");
+			System.setProperty("org.apache.commons.logging.robotlogger.log.org.apache.http", "DEBUG");
 		}
 		HttpHost target;
 		try {
@@ -57,22 +61,35 @@ public class RestClient {
 		}
 		Session session = new Session();
 		session.setContext(this.createContext(auth, target));
-		session.setClient(this.createHttpClient(auth, verify, target));
+		session.setClient(this.createHttpClient(auth, verify, target, false));
 		session.setUrl(url);
+		session.setHttpHost(target);
+		session.setVerify(verify);
+		session.setAuthentication(auth);
 		sessions.put(alias, session);
 	}
 
-	public void makeGetRequest(String alias, String uri, Map<String, String> parameters, boolean allowRedirects) {
+	public void makeGetRequest(String alias, String uri, Map<String, String> headers, Map<String, String> parameters,
+			boolean allowRedirects) {
 		HttpGet getRequest = new HttpGet(this.buildUrl(alias, uri, parameters));
+		getRequest = this.setHeaders(getRequest, headers);
 		getRequest.setConfig(RequestConfig.custom().setRedirectsEnabled(allowRedirects).build());
 		Session session = this.getSession(alias);
 		this.makeRequest(getRequest, session);
 	}
 
-	public void makePostRequest(String alias, String uri, Object data, Map<String, String> parameters) {
+	public void makePostRequest(String alias, String uri, Object data, Map<String, String> parameters,
+			Map<String, String> headers, Map<String, String> files, Boolean allowRedirects) {
 		HttpPost postRequest = new HttpPost(this.buildUrl(alias, uri, parameters));
+		postRequest = this.setHeaders(postRequest, headers);
 		if (data.toString().length() > 0) {
 			postRequest.setEntity(this.createDataEntity(data));
+		} else if (files.entrySet().size() > 0) {
+			postRequest.setEntity(this.createDataEntity(files));
+		}
+		if (allowRedirects) {
+			Session session = this.getSession(alias);
+			session.setClient(this.createHttpClient(session.getAuthentication(), session.getVerify(), session.getHttpHost(), true));
 		}
 		Session session = this.getSession(alias);
 		this.makeRequest(postRequest, session);
@@ -110,12 +127,12 @@ public class RestClient {
 		CookieStore cookieStore = new BasicCookieStore();
 		httpClientContext.setCookieStore(cookieStore);
 		if (auth.usePreemptiveAuthentication()) {
-	        httpClientContext.setAuthCache(new Security().getAuthCache(auth, target));
+			httpClientContext.setAuthCache(new Security().getAuthCache(auth, target));
 		}
 		return httpClientContext;
 	}
 
-	private HttpClient createHttpClient(Authentication auth, String verify, HttpHost target) {
+	private HttpClient createHttpClient(Authentication auth, String verify, HttpHost target, Boolean postRedirects) {
 		Security security = new Security();
 		HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
 
@@ -134,10 +151,13 @@ public class RestClient {
 		if (auth.isAuthenticable()) {
 			httpClientBuilder.setDefaultCredentialsProvider(security.getCredentialsProvider(auth, target));
 		}
-		
-	    RequestConfig requestConfig = RequestConfig.custom().setCookieSpec(CookieSpecs.DEFAULT).build();
-	    httpClientBuilder.setDefaultRequestConfig(requestConfig);
-		
+
+		if (postRedirects) {
+			httpClientBuilder.setRedirectStrategy(new LaxRedirectStrategy());
+		}
+		RequestConfig requestConfig = RequestConfig.custom().setCookieSpec(CookieSpecs.DEFAULT).build();
+		httpClientBuilder.setDefaultRequestConfig(requestConfig);
+
 		return httpClientBuilder.build();
 	}
 
@@ -157,6 +177,13 @@ public class RestClient {
 		}
 		url += parameterString.length() > 1 ? "?" + parameterString.substring(0, parameterString.length() - 1) : "";
 		return url;
+	}
+
+	private <T> T setHeaders(T request, Map<String, String> headers) {
+		for (Entry<String, String> entry : headers.entrySet()) {
+			((HttpRequest) request).setHeader(entry.getKey(), entry.getValue());
+		}
+		return request;
 	}
 
 }

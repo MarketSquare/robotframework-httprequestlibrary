@@ -18,6 +18,7 @@ public class Session {
 	private HttpResponse response;
 	private Authentication authentication;
 	private HttpHost httpHost;
+	private String verify;
 
 	public String getAlias() {
 		return alias;
@@ -96,5 +97,13 @@ public class Session {
 	
 	public ResponseData getResponseData() {
 		return this.responseData;
+	}
+
+	public String getVerify() {
+		return verify;
+	}
+
+	public void setVerify(String verify) {
+		this.verify = verify;
 	}
 }

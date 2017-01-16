@@ -25,7 +25,7 @@ public class Session {
 	}
 	
 	@RobotKeyword
-	@ArgumentNames({"alias", "url", "headers={}", "cookies=None", "auth=None", "timeout=None", "proxies=None", "verify=False", "debug=0", "max_retries=3", "backoff_factor=0.1", "disable_warnings=0"})
+	@ArgumentNames({"alias", "url", "headers={}", "cookies=None", "auth=None", "timeout=None", "proxies=None", "verify=False", "debug=False", "max_retries=3", "backoff_factor=0.1", "disable_warnings=0"})
 	public void createDigestSession(String alias, String url, String...params) {
 		RestClient rc = new RestClient();
 		String verify = Robot.getParamsValue(params, 5, "False");

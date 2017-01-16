@@ -69,9 +69,7 @@ public class RobotLogger implements Log {
 	}
 	
 	public void debug(Object log) {
-		if (isDebugEnabled()) {
-			System.out.println("*DEBUG* "+log);
-		}
+		System.out.println("*DEBUG* "+log);
 	}
 	
 	public void trace(Object log) {
@@ -83,10 +81,8 @@ public class RobotLogger implements Log {
 	}
 
 	public void debug(Object message, Throwable t) {
-		if (isDebugEnabled()) {
-			System.out.println("*DEBUG* "+message);
-			System.out.println("*DEBUG* "+ExceptionUtils.getStackTrace(t));
-		}
+		System.out.println("*DEBUG* "+message);
+		System.out.println("*DEBUG* "+ExceptionUtils.getStackTrace(t));
 	}
 
 	public void error(Object message, Throwable t) {

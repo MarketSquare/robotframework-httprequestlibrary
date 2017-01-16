@@ -25,7 +25,10 @@ public class Post {
 			dataList = Robot.getParamsValue(params, 0, "");
 		}
 		Map<String, String> paramList = Robot.getParamsValue(params, 1, (Map<String, String>) new HashMap<String, String>());
-		rc.makePostRequest(alias, uri, dataList, paramList);
+		Map<String, String> headers = Robot.getParamsValue(params, 2, (Map<String, String>) new HashMap<String, String>());
+		Map<String, String> files = Robot.getParamsValue(params, 3, (Map<String, String>) new HashMap<String, String>());
+		Boolean allowRedirects = Boolean.parseBoolean(Robot.getParamsValue(params, 4, "true"));
+		rc.makePostRequest(alias, uri, dataList, paramList, headers, files, allowRedirects);
 		return rc.getSession(alias).getResponseData();
 	}
 }
