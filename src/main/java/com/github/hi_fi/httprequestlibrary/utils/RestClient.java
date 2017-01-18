@@ -7,6 +7,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLEncoder;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -30,9 +31,14 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.client.utils.URIUtils;
+import org.apache.http.entity.ContentType;
 import org.apache.http.entity.FileEntity;
 import org.apache.http.entity.InputStreamEntity;
 import org.apache.http.entity.StringEntity;
+import org.apache.http.entity.mime.HttpMultipartMode;
+import org.apache.http.entity.mime.MultipartEntityBuilder;
+import org.apache.http.entity.mime.content.FileBody;
+import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.LaxRedirectStrategy;
@@ -83,17 +89,20 @@ public class RestClient {
 
 	public void makePostRequest(String alias, String uri, Object data, Map<String, String> parameters,
 			Map<String, String> headers, Map<String, String> files, Boolean allowRedirects) {
-		logger.debug(data);
 		HttpPost postRequest = new HttpPost(this.buildUrl(alias, uri, parameters));
 		postRequest = this.setHeaders(postRequest, headers);
 		if (data.toString().length() > 0) {
+			logger.debug(data);
 			postRequest.setEntity(this.createDataEntity(data));
-		} else if (files.entrySet().size() > 0) {
+		}
+		if (files.entrySet().size() > 0) {
+			logger.debug(files);
 			postRequest.setEntity(this.createFileEntity(files));
 		}
 		if (allowRedirects) {
 			Session session = this.getSession(alias);
-			session.setClient(this.createHttpClient(session.getAuthentication(), session.getVerify(), session.getHttpHost(), true));
+			session.setClient(this.createHttpClient(session.getAuthentication(), session.getVerify(),
+					session.getHttpHost(), true));
 		}
 		Session session = this.getSession(alias);
 		this.makeRequest(postRequest, session);
@@ -115,25 +124,20 @@ public class RestClient {
 			throw new RuntimeException("Unsupported encoding noticed. Error message: " + e.getMessage());
 		}
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	private HttpEntity createFileEntity(Object files) {
-		try {
-			if (files instanceof Map) {
-				for (Entry<String, Object> entry : ((Map<String, Object>) files).entrySet()) {
-					if (new File(entry.getValue().toString()).exists()) {
-						return new FileEntity(new File(entry.getValue().toString()));
-					} else {
-						return new InputStreamEntity(new ByteArrayInputStream(entry.getValue().toString().getBytes()));
-					}
-				}
+		MultipartEntityBuilder builder = MultipartEntityBuilder.create();
+		for (Entry<String, Object> entry : ((Map<String, Object>) files).entrySet()) {
+			if (new File(entry.getValue().toString()).exists()) {
+				builder.addPart(entry.getKey(),
+						new FileBody(new File(entry.getValue().toString()), ContentType.DEFAULT_BINARY));
 			} else {
-				return new StringEntity(files.toString());
+				builder.addPart(entry.getKey(),
+						new StringBody(entry.getValue().toString(), ContentType.DEFAULT_TEXT));
 			}
-		} catch (UnsupportedEncodingException e) {
-			throw new RuntimeException("Unsupported encoding noticed. Error message: " + e.getMessage());
 		}
-		return null;
+		return builder.build();
 	}
 
 	private void makeRequest(HttpUriRequest request, Session session) {

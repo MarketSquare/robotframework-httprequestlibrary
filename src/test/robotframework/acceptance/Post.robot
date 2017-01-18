@@ -84,7 +84,7 @@ Post With File
     ${file_data}=  Get Binary File  ${CURDIR}${/}data.json
     &{files}=  Create Dictionary  file=${file_data}
     ${resp}=  Post Request  httpbin  /post  files=${files}
-    ${file}=  To Json  ${resp.json['files']['file']}
+    ${file}=  To Json  ${resp.json['form']['file']}
     Dictionary Should Contain Key  ${file}  one
     Dictionary Should Contain Key  ${file}  two
 
@@ -95,7 +95,7 @@ Post Request With File
     ${file_data}=  Get Binary File  ${CURDIR}${/}data.json
     &{files}=  Create Dictionary  file=${file_data}
     ${resp}=  Post Request  httpbin  /post  files=${files}
-    ${file}=  To Json  ${resp.json['files']['file']}
+    ${file}=  To Json  ${resp.json['form']['file']}
     Dictionary Should Contain Key  ${file}  one
     Dictionary Should Contain Key  ${file}  two
     
