@@ -5,12 +5,11 @@ Resource    common.robot
 Get Requests
     [Tags]  get
     Create Session  google  http://www.google.com
-    Create Session  github  https://api.github.com
+    Create Session  httpbin     http://httpbin.org
     ${resp}=  Get Request  google  /
     Should Be Equal As Strings  ${resp.status_code}  200
-    ${resp}=  Get Request  github  /users/bulkan
+    ${resp}=  Get Request  httpbin  /
     Should Be Equal As Strings  ${resp.status_code}  200
-    Dictionary Should Contain Value  ${resp.json}  Bulkan Evcimen
 
 Get Requests with Url Parameters
     [Tags]  get

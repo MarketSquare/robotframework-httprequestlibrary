@@ -45,7 +45,7 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<keywords.class>httprequestlibrary</keywords.class>
+		<keywords.class>HttpRequestLibrary</keywords.class>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<powermock.version>1.6.5</powermock.version>
 		<httpclient.version>4.5.2</httpclient.version>
