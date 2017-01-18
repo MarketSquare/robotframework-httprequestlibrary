@@ -1,6 +1,7 @@
 package com.github.hi_fi.httprequestlibrary.domain;
 
 import java.io.IOException;
+import java.util.Map;
 
 import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
@@ -19,6 +20,7 @@ public class Session {
 	private Authentication authentication;
 	private HttpHost httpHost;
 	private String verify;
+	private Map<String, String> headers;
 
 	public String getAlias() {
 		return alias;
@@ -105,5 +107,13 @@ public class Session {
 
 	public void setVerify(String verify) {
 		this.verify = verify;
+	}
+
+	public Map<String, String> getHeaders() {
+		return headers;
+	}
+
+	public void setHeaders(Map<String, String> headers) {
+		this.headers = headers;
 	}
 }

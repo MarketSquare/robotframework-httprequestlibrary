@@ -56,7 +56,7 @@ public class RestClient {
 		return sessions.get(alias);
 	}
 
-	public void createSession(String alias, String url, Authentication auth, String verify, Boolean debug) {
+	public void createSession(String alias, String url, Map<String, String> headers, Authentication auth, String verify, Boolean debug) {
 		if (debug) {
 			System.setProperty("org.apache.commons.logging.Log",
 					"com.github.hi_fi.httprequestlibrary.utils.RobotLogger");
@@ -72,6 +72,7 @@ public class RestClient {
 		session.setContext(this.createContext(auth, target));
 		session.setClient(this.createHttpClient(auth, verify, target, false));
 		session.setUrl(url);
+		session.setHeaders(headers);
 		session.setHttpHost(target);
 		session.setVerify(verify);
 		session.setAuthentication(auth);
@@ -141,6 +142,7 @@ public class RestClient {
 	}
 
 	private void makeRequest(HttpUriRequest request, Session session) {
+		request = this.setHeaders(request, session.getHeaders());
 		try {
 			session.setResponse(session.getClient().execute(request, session.getContext()));
 		} catch (ClientProtocolException e) {
