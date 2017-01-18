@@ -38,6 +38,7 @@ Post With Unicode Data
     &{data}=  Create Dictionary  name=度假村
     &{headers}=  Create Dictionary  Content-Type=application/x-www-form-urlencoded
     ${resp}=  Post Request  httpbin  /post  data=${data}  headers=${headers}
+    Log    ${resp.json['form'].toString()}
     Dictionary Should Contain Value  ${resp.json['form']}  度假村
 
 Post Request With Unicode Data

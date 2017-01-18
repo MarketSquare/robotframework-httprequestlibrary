@@ -1,7 +1,10 @@
 package com.github.hi_fi.httprequestlibrary.utils;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.python.util.PythonInterpreter;
 import com.google.gson.Gson;
@@ -33,16 +36,10 @@ public class Robot {
 	@SuppressWarnings({ "unchecked", "resource" })
 	public static Map<String, Object> parseRobotDictionary(String dictionary) {
 		logger.debug("Dictionary going to be parsed to Map: " + dictionary);
-		dictionary = StringEscapeUtils.escapeJava(dictionary);
-		logger.debug("Escaped dictionary going to be parsed to Map: " + dictionary);
-		Map<String, Object> json = new Gson().fromJson(dictionary.replace("u'", "'"), Map.class);
+		
 		PythonInterpreter py = new PythonInterpreter();
-		for (Object key : json.keySet()) {
-			String newKey = py.eval("'"+key+"'.decode('utf-8')").toString();
-			String newValue = py.eval("'"+json.get(key)+"'.decode('utf-8')").toString();
-			json.remove(key);
-			json.put(newKey, newValue);
-		}
+		py.exec("import json");
+		Map<String, Object> json = new Gson().fromJson(py.eval("json.dumps("+dictionary+")").toString(), Map.class);
 		return json;
 	}
 	
