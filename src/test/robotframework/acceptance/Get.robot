@@ -8,7 +8,7 @@ Get Requests
     Create Session  httpbin     http://httpbin.org
     ${resp}=  Get Request  google  /
     Should Be Equal As Strings  ${resp.status_code}  200
-    ${resp}=  Get Request  github  /
+    ${resp}=  Get Request  httpbin  /
     Should Be Equal As Strings  ${resp.status_code}  200
 
 Get Requests with Url Parameters
