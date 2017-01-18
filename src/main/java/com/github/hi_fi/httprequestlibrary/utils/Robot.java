@@ -21,7 +21,7 @@ public class Robot {
 			logger.debug("Value from arguments: " + givenValue);
 		}
 
-		if (givenValue != null && !givenValue.equals("None")) {
+		if (givenValue != null && !givenValue.equals("None") && givenValue.length() > 0) {
 			if (defaultValue instanceof Map) {
 				value = (T) parseRobotDictionary(givenValue);
 			} else if (defaultValue instanceof String) {

@@ -66,7 +66,6 @@ Post Request With Binary Data
     ${data}=  Get Binary File  ${CURDIR}${/}data.json
     &{headers}=  Create Dictionary  Content-Type=application/x-www-form-urlencoded
     ${resp}=  Post Request  httpbin  /post  data=${data}  headers=${headers}
-    Log  ${resp.json.toString()}
     Log  ${resp.json['form'].toString()}
     Should Contain  ${resp.json['form'].toString()}  度假村
 
@@ -81,7 +80,7 @@ Post Request With Arbitrary Binary Data
 
 Post With File
     [Tags]  post
-    Create Session  httpbin  http://httpbin.org
+    Create Session  httpbin  http://httpbin.org    debug=True
     ${file_data}=  Get Binary File  ${CURDIR}${/}data.json
     &{files}=  Create Dictionary  file=${file_data}
     ${resp}=  Post Request  httpbin  /post  files=${files}
@@ -92,7 +91,7 @@ Post With File
 
 Post Request With File
     [Tags]  post
-    Create Session  httpbin  http://httpbin.org
+    Create Session  httpbin  http://httpbin.org    debug=True
     ${file_data}=  Get Binary File  ${CURDIR}${/}data.json
     &{files}=  Create Dictionary  file=${file_data}
     ${resp}=  Post Request  httpbin  /post  files=${files}

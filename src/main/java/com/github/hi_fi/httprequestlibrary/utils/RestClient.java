@@ -1,5 +1,6 @@
 package com.github.hi_fi.httprequestlibrary.utils;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -29,6 +30,8 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.client.utils.URIUtils;
+import org.apache.http.entity.FileEntity;
+import org.apache.http.entity.InputStreamEntity;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.HttpClientBuilder;
@@ -86,7 +89,7 @@ public class RestClient {
 		if (data.toString().length() > 0) {
 			postRequest.setEntity(this.createDataEntity(data));
 		} else if (files.entrySet().size() > 0) {
-			postRequest.setEntity(this.createDataEntity(files));
+			postRequest.setEntity(this.createFileEntity(files));
 		}
 		if (allowRedirects) {
 			Session session = this.getSession(alias);
@@ -111,6 +114,26 @@ public class RestClient {
 		} catch (UnsupportedEncodingException e) {
 			throw new RuntimeException("Unsupported encoding noticed. Error message: " + e.getMessage());
 		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	private HttpEntity createFileEntity(Object files) {
+		try {
+			if (files instanceof Map) {
+				for (Entry<String, Object> entry : ((Map<String, Object>) files).entrySet()) {
+					if (new File(entry.getValue().toString()).exists()) {
+						return new FileEntity(new File(entry.getValue().toString()));
+					} else {
+						return new InputStreamEntity(new ByteArrayInputStream(entry.getValue().toString().getBytes()));
+					}
+				}
+			} else {
+				return new StringEntity(files.toString());
+			}
+		} catch (UnsupportedEncodingException e) {
+			throw new RuntimeException("Unsupported encoding noticed. Error message: " + e.getMessage());
+		}
+		return null;
 	}
 
 	private void makeRequest(HttpUriRequest request, Session session) {
