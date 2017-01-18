@@ -7,6 +7,7 @@ import org.robotframework.javalib.annotation.ArgumentNames;
 import org.robotframework.javalib.annotation.RobotKeyword;
 import org.robotframework.javalib.annotation.RobotKeywords;
 
+import com.github.hi_fi.httprequestlibrary.domain.ResponseData;
 import com.github.hi_fi.httprequestlibrary.utils.RestClient;
 import com.github.hi_fi.httprequestlibrary.utils.Robot;
 
@@ -14,10 +15,13 @@ import com.github.hi_fi.httprequestlibrary.utils.Robot;
 public class Get {
 	
 	@RobotKeyword
-	@ArgumentNames({"alias", "uri", "headers={}", "params={}", "allow_redirects=False", "timeout=0"})
-	public void getRequest(String alias, String uri, String...params) {
+	@ArgumentNames({"alias", "uri", "headers={}", "params={}", "allow_redirects=true", "timeout=0"})
+	public ResponseData getRequest(String alias, String uri, String...params) {
 		RestClient rc = new RestClient();
+		Boolean allowRedirects = Boolean.parseBoolean(Robot.getParamsValue(params, 2, "true"));
 		Map<String, String> paramList = Robot.getParamsValue(params, 1, (Map<String, String>) new HashMap<String, String>());
-		rc.makeGetRequest(alias, uri, paramList);
+		Map<String, String> headers = Robot.getParamsValue(params, 0, (Map<String, String>) new HashMap<String, String>());
+		rc.makeGetRequest(alias, uri, headers, paramList, allowRedirects);
+		return rc.getSession(alias).getResponseData();
 	}
 }

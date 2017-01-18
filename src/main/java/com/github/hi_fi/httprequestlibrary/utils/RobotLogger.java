@@ -1,17 +1,64 @@
 package com.github.hi_fi.httprequestlibrary.utils;
 
-import java.io.Serializable;
-
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.commons.logging.Log;
 
-
-public class RobotLogger implements Log, Serializable {
+public class RobotLogger implements Log {
 	
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 3269522167427538736L;
+	public enum Level {
+			ALL(0),
+			TRACE(1),
+			DEBUG(2),
+			INFO(3),
+			WARN(4),
+			ERROR(5),
+			FATAL(6),
+			NONE(7);
+		private int order;
+		Level(int order) {
+			this.order = order;
+		}
+		
+		public int getLevel() {
+			return this.order;
+		}
+			
+	}
+	
+	
+	
+	/** The name of this simple log instance */
+    protected volatile String logName = null;
+    /** The current log level */
+    protected volatile Level currentLogLevel;
+    
+    static protected final String systemPrefix = "org.apache.commons.logging.robotlogger.";
+	
+	public RobotLogger(String name) {
+		logName = name;
+		
+		// Set initial log level
+        // Used to be: set default log level to ERROR
+        // IMHO it should be lower, but at least info ( costin ).
+        setLevel(Level.INFO);
+
+        // Set log level from properties
+        String lvl = getStringProperty(systemPrefix + "log." + logName);
+        int i = String.valueOf(name).lastIndexOf(".");
+        while(null == lvl && i > -1) {
+            name = name.substring(0,i);
+            lvl = getStringProperty(systemPrefix + "log." + name);
+            i = String.valueOf(name).lastIndexOf(".");
+        }
+
+        if(null == lvl) {
+            lvl =  getStringProperty(systemPrefix + "defaultlog");
+        }
+        
+        if (lvl != null) {
+        	setLevel(Level.valueOf(lvl.toUpperCase()));
+        }
+	}
 
 	public static void logHTML(Object log) {
 		System.out.println("*HTML* "+log);
@@ -57,33 +104,27 @@ public class RobotLogger implements Log, Serializable {
 	}
 
 	public boolean isDebugEnabled() {
-		// TODO Auto-generated method stub
-		return false;
+		return currentLogLevel.getLevel() <= Level.DEBUG.getLevel();
 	}
 
 	public boolean isErrorEnabled() {
-		// TODO Auto-generated method stub
-		return false;
+		return currentLogLevel.getLevel() <= Level.ERROR.getLevel();
 	}
 
 	public boolean isFatalEnabled() {
-		// TODO Auto-generated method stub
-		return false;
+		return currentLogLevel.getLevel() <= Level.FATAL.getLevel();
 	}
 
 	public boolean isInfoEnabled() {
-		// TODO Auto-generated method stub
-		return false;
+		return currentLogLevel.getLevel() <= Level.INFO.getLevel();
 	}
 
 	public boolean isTraceEnabled() {
-		// TODO Auto-generated method stub
-		return false;
+		return currentLogLevel.getLevel() <= Level.TRACE.getLevel();
 	}
 
 	public boolean isWarnEnabled() {
-		// TODO Auto-generated method stub
-		return false;
+		return currentLogLevel.getLevel() <= Level.WARN.getLevel();
 	}
 
 	public void trace(Object message, Throwable t) {
@@ -100,4 +141,18 @@ public class RobotLogger implements Log, Serializable {
 		System.out.println("*WARN* "+ExceptionUtils.getStackTrace(t));
 		
 	}
+	
+    private static String getStringProperty(String name) {
+        String prop = null;
+        try {
+            prop = System.getProperty(name);
+        } catch (SecurityException e) {
+            // Ignore
+        }
+        return prop;
+    }
+    
+    public void setLevel(Level currentLogLevel) {
+        this.currentLogLevel = currentLogLevel;
+    }
 }

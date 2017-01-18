@@ -14,10 +14,11 @@ public class Session {
 	private String url;
 	private HttpClientContext context;
 	private HttpClient client;
+	private ResponseData responseData = new ResponseData();
 	private HttpResponse response;
-	private String responseBody;
 	private Authentication authentication;
 	private HttpHost httpHost;
+	private String verify;
 
 	public String getAlias() {
 		return alias;
@@ -51,6 +52,7 @@ public class Session {
 		this.response = response;
 		try {
 			this.setResponseBody(EntityUtils.toString(response.getEntity(), "UTF-8"));
+			this.responseData.setStatusCode(response.getStatusLine().getStatusCode());
 		} catch (ParseException e) {
 			throw new RuntimeException("Parsing exception. Message: "+e.getMessage());
 		} catch (IOException e) {
@@ -59,11 +61,11 @@ public class Session {
 	}
 
 	public String getResponseBody() {
-		return responseBody;
+		return responseData.getText();
 	}
 
 	private void setResponseBody(String responseBody) {
-		this.responseBody = responseBody;
+		this.responseData.setText(responseBody);
 	}
 
 	public String getUrl() {
@@ -91,5 +93,17 @@ public class Session {
 
 	public void setHttpHost(HttpHost httpHost) {
 		this.httpHost = httpHost;
+	}
+	
+	public ResponseData getResponseData() {
+		return this.responseData;
+	}
+
+	public String getVerify() {
+		return verify;
+	}
+
+	public void setVerify(String verify) {
+		this.verify = verify;
 	}
 }

@@ -40,7 +40,7 @@ import com.github.hi_fi.httprequestlibrary.domain.Authentication;
 
 public class Security {
 	
-	RobotLogger logger = new RobotLogger();
+	RobotLogger logger = new RobotLogger("Security");
 	
 	protected AuthCache getAuthCache(Authentication auth, HttpHost target) {
 		AuthCache authCache = new BasicAuthCache();
