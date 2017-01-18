@@ -1,9 +1,9 @@
 package com.github.hi_fi.httprequestlibrary.utils;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
+import org.apache.commons.lang3.StringEscapeUtils;
+import org.python.util.PythonInterpreter;
 import com.google.gson.Gson;
 
 public class Robot {
@@ -26,16 +26,28 @@ public class Robot {
 			} else if (defaultValue instanceof List) {
 				value = (T) parseRobotList(givenValue);
 			}
-			
 		}
 		return value;
 	}
 
-	public static Map<String, String> parseRobotDictionary(String dictionary) {
-		return new Gson().fromJson(dictionary.replace("u'", "'"), Map.class);
+	@SuppressWarnings({ "unchecked", "resource" })
+	public static Map<String, Object> parseRobotDictionary(String dictionary) {
+		logger.debug("Dictionary going to be parsed to Map: " + dictionary);
+		dictionary = StringEscapeUtils.escapeJava(dictionary);
+		logger.debug("Escaped dictionary going to be parsed to Map: " + dictionary);
+		Map<String, Object> json = new Gson().fromJson(dictionary.replace("u'", "'"), Map.class);
+		PythonInterpreter py = new PythonInterpreter();
+		for (Object key : json.keySet()) {
+			String newKey = py.eval("'"+key+"'.decode('utf-8')").toString();
+			String newValue = py.eval("'"+json.get(key)+"'.decode('utf-8')").toString();
+			json.remove(key);
+			json.put(newKey, newValue);
+		}
+		return json;
 	}
 	
 	public static List<String> parseRobotList(String list) {
+		logger.debug("List going to be parsed: " + list);
 		return new Gson().fromJson(list.replace("u'", "'"), List.class);
 	}
 

@@ -22,8 +22,7 @@ public class Response {
 	@SuppressWarnings("rawtypes")
 	@RobotKeyword
 	public Map toJson(String data) {
-		Map jsonJavaRootObject = new Gson().fromJson(data, Map.class);
-		return jsonJavaRootObject;
+		return new Gson().fromJson(data.replace("u'", "'"), Map.class);
 	}
 	
 	@RobotKeyword

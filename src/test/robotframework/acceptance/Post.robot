@@ -56,8 +56,8 @@ Post Request With Binary Data in Dictionary
     &{headers}=  Create Dictionary  Content-Type=application/x-www-form-urlencoded
     ${resp}=  Post Request  httpbin  /post  data=${data}  headers=${headers}
     Log  ${resp.json['form']}
-    ${name}    To Json    ${resp.json['form']}
-    Should Contain  ${name}  \u5ea6\u5047\u6751
+    Log  ${resp.json['form']['name']}
+    Should Contain  ${resp.json['form']['name']}  \u5ea6\u5047\u6751
 
 Post Request With Binary Data
     [Tags]  post
@@ -65,9 +65,9 @@ Post Request With Binary Data
     ${data}=  Get Binary File  ${CURDIR}${/}data.json
     &{headers}=  Create Dictionary  Content-Type=application/x-www-form-urlencoded
     ${resp}=  Post Request  httpbin  /post  data=${data}  headers=${headers}
-    Log  ${resp.json['form']}
-    ${value}=  evaluate  list(${resp.json}['form'].keys())[0]
-    Should Contain  ${value}  度假村
+    Log  ${resp.json.toString()}
+    Log  ${resp.json['form'].toString()}
+    Should Contain  ${resp.json['form'].toString()}  度假村
 
 Post Request With Arbitrary Binary Data
     [Tags]  post

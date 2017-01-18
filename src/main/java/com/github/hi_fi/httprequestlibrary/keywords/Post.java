@@ -10,9 +10,12 @@ import org.robotframework.javalib.annotation.RobotKeywords;
 import com.github.hi_fi.httprequestlibrary.domain.ResponseData;
 import com.github.hi_fi.httprequestlibrary.utils.RestClient;
 import com.github.hi_fi.httprequestlibrary.utils.Robot;
+import com.github.hi_fi.httprequestlibrary.utils.RobotLogger;
 
 @RobotKeywords
 public class Post {
+	
+	RobotLogger logger = new RobotLogger("Post");
 	
 	@RobotKeyword
 	@ArgumentNames({"alias", "uri", "data={}", "params={}", "headers={}", "files=", "allow_redirects=False", "timeout=0"})
@@ -22,6 +25,7 @@ public class Post {
 		try {
 			dataList = Robot.getParamsValue(params, 0, (Map<String, String>) new HashMap<String, String>());
 		} catch (Exception e) {
+			logger.debug(e);
 			dataList = Robot.getParamsValue(params, 0, "");
 		}
 		Map<String, String> paramList = Robot.getParamsValue(params, 1, (Map<String, String>) new HashMap<String, String>());

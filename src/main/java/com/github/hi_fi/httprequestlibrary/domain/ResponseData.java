@@ -2,9 +2,12 @@ package com.github.hi_fi.httprequestlibrary.domain;
 
 import java.util.Map;
 
+import org.apache.commons.lang3.StringEscapeUtils;
+
 import com.google.gson.Gson;
 
 public class ResponseData {
+
 	public int status_code;
 	public String text;
 	public String content;
@@ -31,9 +34,8 @@ public class ResponseData {
 		this.text = text;
 		this.content = text;
 		try {
-			this.json = new Gson().fromJson(text, Map.class);
+			this.json = new Gson().fromJson(this.text, Map.class);
 		} catch (Exception e) {
-			// TODO: handle exception
 		}
 	}
 	

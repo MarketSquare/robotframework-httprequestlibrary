@@ -80,6 +80,7 @@ public class RestClient {
 
 	public void makePostRequest(String alias, String uri, Object data, Map<String, String> parameters,
 			Map<String, String> headers, Map<String, String> files, Boolean allowRedirects) {
+		logger.debug(data);
 		HttpPost postRequest = new HttpPost(this.buildUrl(alias, uri, parameters));
 		postRequest = this.setHeaders(postRequest, headers);
 		if (data.toString().length() > 0) {
@@ -99,9 +100,9 @@ public class RestClient {
 	private HttpEntity createDataEntity(Object data) {
 		try {
 			if (data instanceof Map) {
-				List<NameValuePair> params = new ArrayList<NameValuePair>(2);
-				for (Entry<String, String> entry : ((Map<String, String>) data).entrySet()) {
-					params.add(new BasicNameValuePair(entry.getKey(), entry.getValue()));
+				List<NameValuePair> params = new ArrayList<NameValuePair>(0);
+				for (Entry<String, Object> entry : ((Map<String, Object>) data).entrySet()) {
+					params.add(new BasicNameValuePair(entry.getKey(), entry.getValue().toString()));
 				}
 				return new UrlEncodedFormEntity(params, "UTF-8");
 			} else {
