@@ -1,13 +1,11 @@
 package com.github.hi_fi.httprequestlibrary.utils;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLEncoder;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -16,26 +14,24 @@ import java.util.Map.Entry;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
-import org.apache.http.HttpMessage;
 import org.apache.http.HttpRequest;
 import org.apache.http.NameValuePair;
-import org.apache.http.auth.AuthProtocolState;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.CookieStore;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.config.CookieSpecs;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpHead;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.client.utils.URIUtils;
 import org.apache.http.entity.ContentType;
-import org.apache.http.entity.FileEntity;
-import org.apache.http.entity.InputStreamEntity;
 import org.apache.http.entity.StringEntity;
-import org.apache.http.entity.mime.HttpMultipartMode;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.entity.mime.content.StringBody;
@@ -93,6 +89,28 @@ public class RestClient {
 			Map<String, String> headers, Map<String, String> files, Boolean allowRedirects) {
 		logger.debug("Making POST request");
 		HttpPost postRequest = new HttpPost(this.buildUrl(alias, uri, parameters));
+		postRequest = this.setHeaders(postRequest, headers);
+		if (data.toString().length() > 0) {
+			logger.debug(data);
+			postRequest.setEntity(this.createDataEntity(data));
+		}
+		if (files.entrySet().size() > 0) {
+			logger.debug(files);
+			postRequest.setEntity(this.createFileEntity(files));
+		}
+		if (allowRedirects) {
+			Session session = this.getSession(alias);
+			session.setClient(this.createHttpClient(session.getAuthentication(), session.getVerify(),
+					session.getHttpHost(), true));
+		}
+		Session session = this.getSession(alias);
+		this.makeRequest(postRequest, session);
+	}
+	
+	public void makePutRequest(String alias, String uri, Object data, Map<String, String> parameters,
+			Map<String, String> headers, Map<String, String> files, Boolean allowRedirects) {
+		logger.debug("Making PUT request");
+		HttpPut postRequest = new HttpPut(this.buildUrl(alias, uri, parameters));
 		postRequest = this.setHeaders(postRequest, headers);
 		if (data.toString().length() > 0) {
 			logger.debug(data);
@@ -185,7 +203,28 @@ public class RestClient {
 		}
 
 		if (postRedirects) {
-			httpClientBuilder.setRedirectStrategy(new LaxRedirectStrategy());
+			httpClientBuilder.setRedirectStrategy(new LaxRedirectStrategy() {
+				/**
+			     * Redirectable methods.
+			     */
+			    private String[] REDIRECT_METHODS = new String[] {
+			        HttpGet.METHOD_NAME,
+			        HttpPost.METHOD_NAME,
+			        HttpHead.METHOD_NAME,
+			        HttpDelete.METHOD_NAME,
+			        HttpPut.METHOD_NAME
+			    };
+
+			    @Override
+			    protected boolean isRedirectable(final String method) {
+			        for (final String m: REDIRECT_METHODS) {
+			            if (m.equalsIgnoreCase(method)) {
+			                return true;
+			            }
+			        }
+			        return false;
+			    }
+			});
 		}
 		RequestConfig requestConfig = RequestConfig.custom().setCookieSpec(CookieSpecs.DEFAULT).build();
 		httpClientBuilder.setDefaultRequestConfig(requestConfig);
