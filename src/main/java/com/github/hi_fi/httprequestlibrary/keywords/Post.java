@@ -21,13 +21,10 @@ public class Post {
 	@ArgumentNames({"alias", "uri", "data={}", "params={}", "headers={}", "files=", "allow_redirects=False", "timeout=0"})
 	public ResponseData postRequest(String alias, String uri, String...params) {
 		RestClient rc = new RestClient();
-		Object dataList = "";
-		try {
-			dataList = Robot.getParamsValue(params, 0, (Map<String, String>) new HashMap<String, String>());
-		} catch (Exception e) {
-			logger.debug(e);
-			dataList = Robot.getParamsValue(params, 0, "");
-		}
+		Object dataList = (String) Robot.getParamsValue(params, 0, "");
+		if (Robot.isDictionary(dataList.toString())) {
+			dataList = (Map<String, String>) Robot.getParamsValue(params, 0, (Map<String, String>) new HashMap<String, String>());
+		} 
 		Map<String, String> paramList = Robot.getParamsValue(params, 1, (Map<String, String>) new HashMap<String, String>());
 		Map<String, String> headers = Robot.getParamsValue(params, 2, (Map<String, String>) new HashMap<String, String>());
 		Map<String, String> files = Robot.getParamsValue(params, 3, (Map<String, String>) new HashMap<String, String>());

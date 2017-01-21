@@ -81,6 +81,7 @@ public class RestClient {
 
 	public void makeGetRequest(String alias, String uri, Map<String, String> headers, Map<String, String> parameters,
 			boolean allowRedirects) {
+		logger.debug("Making GET request");
 		HttpGet getRequest = new HttpGet(this.buildUrl(alias, uri, parameters));
 		getRequest = this.setHeaders(getRequest, headers);
 		getRequest.setConfig(RequestConfig.custom().setRedirectsEnabled(allowRedirects).build());
@@ -90,6 +91,7 @@ public class RestClient {
 
 	public void makePostRequest(String alias, String uri, Object data, Map<String, String> parameters,
 			Map<String, String> headers, Map<String, String> files, Boolean allowRedirects) {
+		logger.debug("Making POST request");
 		HttpPost postRequest = new HttpPost(this.buildUrl(alias, uri, parameters));
 		postRequest = this.setHeaders(postRequest, headers);
 		if (data.toString().length() > 0) {

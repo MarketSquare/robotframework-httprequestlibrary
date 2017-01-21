@@ -23,12 +23,22 @@ Post Request With No Dictionary
     Should Be Equal As Strings  ${resp.status_code}  200
     Should Contain  ${resp.text}  ${data}
     
+Post Request With No Dictionary (plain JSON)
+    [Tags]  post
+    Create Session  httpbin  http://httpbin.org    debug=True
+    Set Test Variable  ${data}  {"two": 2, "one": 1}
+    ${resp}=  Post Request  httpbin  /post  data=${data}
+    Log    ${resp}
+    Should Be Equal As Strings  ${resp.status_code}  200
+    Should Be Equal As Strings  ${resp.json['data'].replace('\"','"')}  ${data}
+    
 Post Requests
     [Tags]  post
     Create Session  httpbin  http://httpbin.org
     &{data}=  Create Dictionary  name=bulkan  surname=evcimen
     &{headers}=  Create Dictionary  Content-Type=application/x-www-form-urlencoded
     ${resp}=  Post Request  httpbin  /post  data=${data}  headers=${headers}
+    Log  ${resp.json}
     Dictionary Should Contain Value  ${resp.json['form']}  bulkan
     Dictionary Should Contain Value  ${resp.json['form']}  evcimen
 
