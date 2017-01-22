@@ -12,18 +12,16 @@ import com.github.hi_fi.httprequestlibrary.utils.RestClient;
 import com.github.hi_fi.httprequestlibrary.utils.Robot;
 
 @RobotKeywords
-public class Get {
+public class Head {
 
 	@RobotKeyword
-	@ArgumentNames({ "alias", "uri", "headers={}", "params={}", "allow_redirects=true", "timeout=0" })
-	public ResponseData getRequest(String alias, String uri, String... params) {
+	@ArgumentNames({ "alias", "uri", "headers={}", "allow_redirects=False", "timeout=0" })
+	public ResponseData headRequest(String alias, String uri, String... params) {
 		RestClient rc = new RestClient();
-		Boolean allowRedirects = Boolean.parseBoolean(Robot.getParamsValue(params, 2, "true"));
-		Map<String, String> paramList = Robot.getParamsValue(params, 1,
-				(Map<String, String>) new HashMap<String, String>());
 		Map<String, String> headers = Robot.getParamsValue(params, 0,
 				(Map<String, String>) new HashMap<String, String>());
-		rc.makeGetRequest(alias, uri, headers, paramList, allowRedirects);
+		Boolean allowRedirects = Boolean.parseBoolean(Robot.getParamsValue(params, 1, "false"));
+		rc.makeHeadRequest(alias, uri, headers, allowRedirects);
 		return rc.getSession(alias).getResponseData();
 	}
 }

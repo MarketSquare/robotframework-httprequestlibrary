@@ -13,12 +13,13 @@ import com.github.hi_fi.httprequestlibrary.utils.Robot;
 
 @RobotKeywords
 public class Options {
-	
+
 	@RobotKeyword
-	@ArgumentNames({"alias", "uri", "headers={}", "allow_redirects=False", "timeout=0"})
-	public ResponseData optionsRequest(String alias, String uri, String...params) {
+	@ArgumentNames({ "alias", "uri", "headers={}", "allow_redirects=False", "timeout=0" })
+	public ResponseData optionsRequest(String alias, String uri, String... params) {
 		RestClient rc = new RestClient();
-		Map<String, String> headers = Robot.getParamsValue(params, 0, (Map<String, String>) new HashMap<String, String>());
+		Map<String, String> headers = Robot.getParamsValue(params, 0,
+				(Map<String, String>) new HashMap<String, String>());
 		Boolean allowRedirects = Boolean.parseBoolean(Robot.getParamsValue(params, 1, "true"));
 		rc.makeOptionsRequest(alias, uri, headers, allowRedirects);
 		return rc.getSession(alias).getResponseData();

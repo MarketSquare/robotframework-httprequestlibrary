@@ -10,7 +10,7 @@ import com.google.gson.Gson;
 
 @RobotKeywords
 public class Response {
-	
+
 	@SuppressWarnings("rawtypes")
 	@RobotKeyword
 	public Map getJsonResponse(String alias) {
@@ -18,13 +18,13 @@ public class Response {
 		Session session = rc.getSession(alias);
 		return this.toJson(session.getResponseBody());
 	}
-	
+
 	@SuppressWarnings("rawtypes")
 	@RobotKeyword
 	public Map toJson(String data) {
 		return new Gson().fromJson(data.replace("u'", "'"), Map.class);
 	}
-	
+
 	@RobotKeyword
 	public Integer getResponseStatusCode(String alias) {
 		return new RestClient().getSession(alias).getResponse().getStatusLine().getStatusCode();

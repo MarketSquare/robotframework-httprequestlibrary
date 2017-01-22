@@ -23,6 +23,7 @@ import org.apache.http.client.config.CookieSpecs;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpHead;
 import org.apache.http.client.methods.HttpOptions;
 import org.apache.http.client.methods.HttpPatch;
 import org.apache.http.client.methods.HttpPost;
@@ -85,11 +86,20 @@ public class RestClient {
 		this.makeRequest(getRequest, session);
 	}
 
+	public void makeHeadRequest(String alias, String uri, Map<String, String> headers, Boolean allowRedirects) {
+		logger.debug("Making HEAD request");
+		HttpHead headRequest = new HttpHead(this.buildUrl(alias, uri));
+		headRequest = this.setHeaders(headRequest, headers);
+		headRequest.setConfig(RequestConfig.custom().setRedirectsEnabled(allowRedirects).build());
+		Session session = this.getSession(alias);
+		this.makeRequest(headRequest, session);
+	}
+
 	public void makeOptionsRequest(String alias, String uri, Map<String, String> headers, Boolean allowRedirects) {
 		logger.debug("Making OPTIONS request");
 		HttpOptions patchRequest = new HttpOptions(this.buildUrl(alias, uri));
 		patchRequest = this.setHeaders(patchRequest, headers);
-		
+
 		if (allowRedirects) {
 			Session session = this.getSession(alias);
 			session.setClient(this.createHttpClient(session.getAuthentication(), session.getVerify(),
