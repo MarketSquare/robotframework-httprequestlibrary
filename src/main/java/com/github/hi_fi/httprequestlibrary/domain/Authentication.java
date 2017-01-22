@@ -28,7 +28,7 @@ public class Authentication {
 		case 2:
 			return new Authentication(auth.get(0), auth.get(1), type);
 		case 3:
-			return new Authentication(auth.get(1), auth.get(2), auth.get(3), type);
+			return new Authentication(auth.get(1), auth.get(2), auth.get(0), type);
 		}
 		return new Authentication();
 	}

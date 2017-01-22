@@ -14,7 +14,16 @@ import com.github.hi_fi.httprequestlibrary.utils.Robot;
 @RobotKeywords
 public class Delete {
 
-	@RobotKeyword
+	@RobotKeyword(" Send a DELETE request on the session object found using the\n\n"
+			 + "given `alias`\n\n"
+			 + "``alias`` that will be used to identify the Session object in the cache\n\n"
+			 + "``uri`` to send the DELETE request to\n\n"
+			 + "``data`` a dictionary of key-value pairs that will be urlencoded and sent as DELETE data or binary data that is sent as the raw body content\n\n"
+			 + "``params`` url parameters to append to the uri\n\n"
+			 + "``headers`` a dictionary of headers to use with the request\n\n"
+			 + "\n\n"
+			 + "``allow_redirects`` Boolean. Set to True if redirect following is allowed.\n\n"
+			 + "``timeout`` connection timeout")
 	@ArgumentNames({ "alias", "uri", "data={}", "params={}", "headers={}", "allow_redirects=False", "timeout=0" })
 	public ResponseData deleteRequest(String alias, String uri, String... params) {
 		RestClient rc = new RestClient();

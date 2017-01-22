@@ -1,16 +1,15 @@
 *** Settings ***
 Resource    common.robot
+Force Tags    OPTIONS
 
 *** Test Cases ***
 Options Request
-    [Tags]  options
     Create Session  httpbin  http://httpbin.org
     ${resp}=  Options Request  httpbin  /headers
     Should Be Equal As Strings  ${resp.status_code}  200
     Dictionary Should Contain Key  ${resp.headers}  Allow
 
 Options Request With Redirection
-    [Tags]  options
     Create Session  httpbin  http://httpbin.org
     ${resp}=  Options Request  httpbin  /redirect/1
     Should Be Equal As Strings  ${resp.status_code}  200

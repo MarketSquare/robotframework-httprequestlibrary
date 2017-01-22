@@ -1,9 +1,9 @@
 *** Settings ***
 Resource    common.robot
+Force Tags    PATCH
 
 *** Test Cases ***
 Patch Requests
-    [Tags]    patch
     Create Session    httpbin    http://httpbin.org
     &{data}=    Create Dictionary    name=bulkan    surname=evcimen
     &{headers}=    Create Dictionary    Content-Type=application/x-www-form-urlencoded

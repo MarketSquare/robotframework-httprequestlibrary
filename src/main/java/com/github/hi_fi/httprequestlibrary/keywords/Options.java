@@ -14,7 +14,14 @@ import com.github.hi_fi.httprequestlibrary.utils.Robot;
 @RobotKeywords
 public class Options {
 
-	@RobotKeyword
+	@RobotKeyword(" Send a OPTIONS request on the session object found using the\n\n"
+			 + "given `alias`\n\n"
+			 + "``alias`` that will be used to identify the Session object in the cache\n\n"
+			 + "``uri`` to send the OPTIONS request to\n\n"
+			 + "``headers`` a dictionary of headers to use with the request\n\n"
+			 + "\n\n"
+			 + "``allow_redirects`` Boolean. Set to True if redirect following is allowed.\n\n"
+			 + "``timeout`` connection timeout")
 	@ArgumentNames({ "alias", "uri", "headers={}", "allow_redirects=False", "timeout=0" })
 	public ResponseData optionsRequest(String alias, String uri, String... params) {
 		RestClient rc = new RestClient();

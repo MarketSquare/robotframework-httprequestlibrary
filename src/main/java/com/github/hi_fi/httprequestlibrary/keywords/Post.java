@@ -14,7 +14,17 @@ import com.github.hi_fi.httprequestlibrary.utils.Robot;
 @RobotKeywords
 public class Post {
 
-	@RobotKeyword
+	@RobotKeyword(" Send a POST request on the session object found using the\n\n"
+			 + "given `alias`\n\n"
+			 + "``alias`` that will be used to identify the Session object in the cache\n\n"
+			 + "``uri`` to send the POST request to\n\n"
+			 + "``data`` a dictionary of key-value pairs that will be urlencoded and sent as POST data or binary data that is sent as the raw body content\n\n"
+			 + "``params`` url parameters to append to the uri\n\n"
+			 + "``headers`` a dictionary of headers to use with the request\n\n"
+			 + "``files`` a dictionary of file names containing file data to POST to the server\n\n"
+			 + "\n\n"
+			 + "``allow_redirects`` Boolean. Set to True if redirect following is allowed.\n\n"
+			 + "``timeout`` connection timeout")
 	@ArgumentNames({ "alias", "uri", "data={}", "params={}", "headers={}", "files=", "allow_redirects=False",
 			"timeout=0" })
 	public ResponseData postRequest(String alias, String uri, String... params) {
