@@ -23,6 +23,7 @@ import org.apache.http.client.config.CookieSpecs;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPatch;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpUriRequest;
@@ -49,7 +50,8 @@ public class RestClient {
 		return sessions.get(alias);
 	}
 
-	public void createSession(String alias, String url, Map<String, String> headers, Authentication auth, String verify, Boolean debug) {
+	public void createSession(String alias, String url, Map<String, String> headers, Authentication auth, String verify,
+			Boolean debug) {
 		if (debug) {
 			System.setProperty("org.apache.commons.logging.Log",
 					"com.github.hi_fi.httprequestlibrary.utils.RobotLogger");
@@ -82,6 +84,28 @@ public class RestClient {
 		this.makeRequest(getRequest, session);
 	}
 
+	public void makePatchRequest(String alias, String uri, Object data, Map<String, String> headers,
+			Map<String, String> files, Boolean allowRedirects) {
+		logger.debug("Making POST request");
+		HttpPatch patchRequest = new HttpPatch(this.buildUrl(alias, uri));
+		patchRequest = this.setHeaders(patchRequest, headers);
+		if (data.toString().length() > 0) {
+			logger.debug(data);
+			patchRequest.setEntity(this.createDataEntity(data));
+		}
+		if (files.entrySet().size() > 0) {
+			logger.debug(files);
+			patchRequest.setEntity(this.createFileEntity(files));
+		}
+		if (allowRedirects) {
+			Session session = this.getSession(alias);
+			session.setClient(this.createHttpClient(session.getAuthentication(), session.getVerify(),
+					session.getHttpHost(), true));
+		}
+		Session session = this.getSession(alias);
+		this.makeRequest(patchRequest, session);
+	}
+
 	public void makePostRequest(String alias, String uri, Object data, Map<String, String> parameters,
 			Map<String, String> headers, Map<String, String> files, Boolean allowRedirects) {
 		logger.debug("Making POST request");
@@ -103,7 +127,7 @@ public class RestClient {
 		Session session = this.getSession(alias);
 		this.makeRequest(postRequest, session);
 	}
-	
+
 	public void makePutRequest(String alias, String uri, Object data, Map<String, String> parameters,
 			Map<String, String> headers, Map<String, String> files, Boolean allowRedirects) {
 		logger.debug("Making PUT request");
@@ -125,7 +149,7 @@ public class RestClient {
 		Session session = this.getSession(alias);
 		this.makeRequest(putRequest, session);
 	}
-	
+
 	public void makeDeleteRequest(String alias, String uri, Object data, Map<String, String> parameters,
 			Map<String, String> headers, Boolean allowRedirects) {
 		logger.debug("Making DELETE request");
@@ -170,8 +194,7 @@ public class RestClient {
 				builder.addPart(entry.getKey(),
 						new FileBody(new File(entry.getValue().toString()), ContentType.DEFAULT_BINARY));
 			} else {
-				builder.addPart(entry.getKey(),
-						new StringBody(entry.getValue().toString(), ContentType.DEFAULT_TEXT));
+				builder.addPart(entry.getKey(), new StringBody(entry.getValue().toString(), ContentType.DEFAULT_TEXT));
 			}
 		}
 		return builder.build();
@@ -227,6 +250,10 @@ public class RestClient {
 		return httpClientBuilder.build();
 	}
 
+	private String buildUrl(String alias, String uri) {
+		return this.buildUrl(alias, uri, new HashMap<String, String>());
+	}
+	
 	private String buildUrl(String alias, String uri, Map<String, String> parameters) {
 		String url = this.getSession(alias).getUrl();
 		if (uri.length() > 0) {
