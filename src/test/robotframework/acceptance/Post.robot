@@ -1,22 +1,20 @@
 *** Settings ***
 Resource    common.robot
+Force Tags    POST
 
 *** Test Cases ***
 Post Request With URL Params
-    [Tags]  post
     Create Session  httpbin  http://httpbin.org
     &{params}=   Create Dictionary   key=value     key2=value2
     ${resp}=  Post Request  httpbin  /post		params=${params}
     Should Be Equal As Strings  ${resp.status_code}  200
 
 Post Request With No Data
-    [Tags]  post
     Create Session  httpbin  http://httpbin.org
     ${resp}=  Post Request  httpbin  /post  
     Should Be Equal As Strings  ${resp.status_code}  200
     
 Post Request With No Dictionary
-    [Tags]  post
     Create Session  httpbin  http://httpbin.org    debug=True
     Set Test Variable  ${data}  some content
     ${resp}=  Post Request  httpbin  /post  data=${data}
@@ -24,7 +22,6 @@ Post Request With No Dictionary
     Should Contain  ${resp.text}  ${data}
     
 Post Request With No Dictionary (plain JSON)
-    [Tags]  post
     Create Session  httpbin  http://httpbin.org    debug=True
     Set Test Variable  ${data}  {"two": 2, "one": 1}
     ${resp}=  Post Request  httpbin  /post  data=${data}
@@ -33,7 +30,6 @@ Post Request With No Dictionary (plain JSON)
     Should Be Equal As Strings  ${resp.json['data'].replace('\"','"')}  ${data}
     
 Post Requests
-    [Tags]  post
     Create Session  httpbin  http://httpbin.org
     &{data}=  Create Dictionary  name=bulkan  surname=evcimen
     &{headers}=  Create Dictionary  Content-Type=application/x-www-form-urlencoded
@@ -43,7 +39,6 @@ Post Requests
     Dictionary Should Contain Value  ${resp.json['form']}  evcimen
 
 Post With Unicode Data
-    [Tags]  post
     Create Session  httpbin  http://httpbin.org    debug=True
     &{data}=  Create Dictionary  name=度假村
     &{headers}=  Create Dictionary  Content-Type=application/x-www-form-urlencoded
@@ -52,7 +47,6 @@ Post With Unicode Data
     Dictionary Should Contain Value  ${resp.json['form']}  度假村
 
 Post Request With Unicode Data
-    [Tags]  post
     Create Session  httpbin  http://httpbin.org    debug=True
     &{data}=  Create Dictionary  name=度假村
     &{headers}=  Create Dictionary  Content-Type=application/x-www-form-urlencoded
@@ -60,7 +54,6 @@ Post Request With Unicode Data
     Dictionary Should Contain Value  ${resp.json['form']}  度假村
 
 Post Request With Binary Data in Dictionary
-    [Tags]  post
     Create Session  httpbin  http://httpbin.org    debug=True
     ${file_data}=  Get Binary File  ${CURDIR}${/}data.json
     &{data}=  Create Dictionary  name=${file_data.strip()}
@@ -71,7 +64,6 @@ Post Request With Binary Data in Dictionary
     Should Contain  ${resp.json['form']['name']}  \u5ea6\u5047\u6751
 
 Post Request With Binary Data
-    [Tags]  post
     Create Session  httpbin  http://httpbin.org    debug=True
     ${data}=  Get Binary File  ${CURDIR}${/}data.json
     &{headers}=  Create Dictionary  Content-Type=application/x-www-form-urlencoded
@@ -80,7 +72,6 @@ Post Request With Binary Data
     Should Contain  ${resp.json['form'].toString()}  度假村
 
 Post Request With Arbitrary Binary Data
-    [Tags]  post
     Create Session  httpbin  http://httpbin.org    debug=True
     ${data}=  Get Binary File  ${CURDIR}${/}randombytes.bin
     &{headers}=  Create Dictionary  Content-Type=application/octet-stream   Accept=application/octet-stream
@@ -89,7 +80,6 @@ Post Request With Arbitrary Binary Data
     Log    "Success"
 
 Post With File
-    [Tags]  post
     Create Session  httpbin  http://httpbin.org    debug=True
     ${file_data}=  Get Binary File  ${CURDIR}${/}data.json
     &{files}=  Create Dictionary  file=${file_data}
@@ -100,7 +90,6 @@ Post With File
 
 
 Post Request With File
-    [Tags]  post
     Create Session  httpbin  http://httpbin.org    debug=True
     ${file_data}=  Get Binary File  ${CURDIR}${/}data.json
     &{files}=  Create Dictionary  file=${file_data}
@@ -110,7 +99,6 @@ Post Request With File
     Dictionary Should Contain Key  ${file}  two
     
 Post Request With Redirection
-    [Tags]  post
     Create Session  jigsaw  http://jigsaw.w3.org
     ${resp}=  Post Request  jigsaw  /HTTP/300/302.html
     Should Be Equal As Strings  ${resp.status_code}  200
@@ -118,8 +106,25 @@ Post Request With Redirection
     Should Be Equal As Strings  ${resp.status_code}  200
 
 Post Request Without Redirection
-    [Tags]  post
     Create Session  jigsaw  http://jigsaw.w3.org    debug=True
     ${resp}=  Post Request  jigsaw  /HTTP/300/302.html  allow_redirects=${false}
     ${status}=  Convert To String  ${resp.status_code}
     Should Start With  ${status}  30
+    
+Post Request With XML File
+    Create Session  httpbin  http://httpbin.org
+    ${file_data}=  Get File  ${CURDIR}${/}test.xml
+    &{files}=  Create Dictionary  xml=${file_data}
+    &{headers}=  Create Dictionary  Authorization=testing-token
+    Log  ${headers}
+    ${resp}=  Post Request  httpbin  /post  files=${files}  headers=${headers}
+    Log  ${resp.json}
+    Set Test Variable  ${req_headers}  ${resp.json['headers']}
+    Dictionary Should Contain Key  ${req_headers}  Authorization    
+    
+Encoding Error
+    Create Session   httpbin   http://httpbin.org
+    &{headers}=  Create Dictionary  Content-Type=application/json
+    Set Suite Variable  ${data}   { "elementToken":"token", "matchCriteria":[{"field":"name","dataType":"string","useOr":"false","fieldValue":"Operation check 07", "closeParen": "false", "openParen": "false", "operator": "equalTo"}], "account": { "annualRevenue": "456666", "name": "Account", "numberOfEmployees": "integer", "billingAddress": { "city": "Miami", "country": "US", "countyOrDistrict": "us or fl", "postalCode": "33131", "stateOrProvince": "florida", "street1": "Trade Center", "street2": "North Main rd" }, "number": "432", "industry": "Bank", "type": "string", "shippingAddress": { "city": "denver", "country": "us", "countyOrDistrict": "us or co", "postalCode": "80202", "stateOrProvince": "colorado", "street1": "Main street", "street2": "101 Avenu"}}}
+    ${resp}=  Post Request  httpbin  /post  data=${data}  headers=${headers}
+    Should Be Equal As Strings  ${resp.status_code}  200
