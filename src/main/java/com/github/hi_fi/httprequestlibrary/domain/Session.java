@@ -3,6 +3,7 @@ package com.github.hi_fi.httprequestlibrary.domain;
 import java.io.IOException;
 import java.util.Map;
 
+import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
 import org.apache.http.ParseException;
@@ -53,8 +54,12 @@ public class Session {
 	public void setResponse(HttpResponse response) {
 		this.response = response;
 		try {
-			this.setResponseBody(EntityUtils.toString(response.getEntity(), "UTF-8"));
+			HttpEntity entity = response.getEntity();
+			if (entity != null) {
+				this.setResponseBody(EntityUtils.toString(entity, "UTF-8"));
+			}
 			this.responseData.setStatusCode(response.getStatusLine().getStatusCode());
+			this.responseData.setHeaders(response.getAllHeaders());
 		} catch (ParseException e) {
 			throw new RuntimeException("Parsing exception. Message: "+e.getMessage());
 		} catch (IOException e) {

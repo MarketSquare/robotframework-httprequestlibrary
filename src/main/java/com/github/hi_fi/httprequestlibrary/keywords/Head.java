@@ -12,26 +12,23 @@ import com.github.hi_fi.httprequestlibrary.utils.RestClient;
 import com.github.hi_fi.httprequestlibrary.utils.Robot;
 
 @RobotKeywords
-public class Get {
+public class Head {
 
-	@RobotKeyword(" Send a GET request on the session object found using the\n\n"
+	@RobotKeyword(" Send a HEAD request on the session object found using the\n\n"
 			 + "given `alias`\n\n"
 			 + "``alias`` that will be used to identify the Session object in the cache\n\n"
-			 + "``uri`` to send the GET request to\n\n"
-			 + "``params`` url parameters to append to the uri\n\n"
+			 + "``uri`` to send the HEAD request to\n\n"
 			 + "``headers`` a dictionary of headers to use with the request\n\n"
 			 + "\n\n"
 			 + "``allow_redirects`` Boolean. Set to True if redirect following is allowed.\n\n"
 			 + "``timeout`` connection timeout")
-	@ArgumentNames({ "alias", "uri", "headers={}", "params={}", "allow_redirects=true", "timeout=0" })
-	public ResponseData getRequest(String alias, String uri, String... params) {
+	@ArgumentNames({ "alias", "uri", "headers={}", "allow_redirects=False", "timeout=0" })
+	public ResponseData headRequest(String alias, String uri, String... params) {
 		RestClient rc = new RestClient();
-		Boolean allowRedirects = Boolean.parseBoolean(Robot.getParamsValue(params, 2, "true"));
-		Map<String, String> paramList = Robot.getParamsValue(params, 1,
-				(Map<String, String>) new HashMap<String, String>());
 		Map<String, String> headers = Robot.getParamsValue(params, 0,
 				(Map<String, String>) new HashMap<String, String>());
-		rc.makeGetRequest(alias, uri, headers, paramList, allowRedirects);
+		Boolean allowRedirects = Boolean.parseBoolean(Robot.getParamsValue(params, 1, "false"));
+		rc.makeHeadRequest(alias, uri, headers, allowRedirects);
 		return rc.getSession(alias).getResponseData();
 	}
 }

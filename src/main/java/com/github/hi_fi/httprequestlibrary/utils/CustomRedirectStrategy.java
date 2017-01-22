@@ -4,6 +4,8 @@ import org.apache.http.annotation.Immutable;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpHead;
+import org.apache.http.client.methods.HttpOptions;
+import org.apache.http.client.methods.HttpPatch;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.impl.client.DefaultRedirectStrategy;
@@ -25,7 +27,9 @@ public class CustomRedirectStrategy extends DefaultRedirectStrategy {
         HttpPost.METHOD_NAME,
         HttpHead.METHOD_NAME,
         HttpDelete.METHOD_NAME,
-        HttpPut.METHOD_NAME
+        HttpPut.METHOD_NAME,
+        HttpPatch.METHOD_NAME,
+        HttpOptions.METHOD_NAME
     };
 
     @Override

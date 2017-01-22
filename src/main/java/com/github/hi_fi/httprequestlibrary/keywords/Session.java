@@ -15,26 +15,48 @@ import com.github.hi_fi.httprequestlibrary.utils.Robot;
 
 @RobotKeywords
 public class Session {
-	
-	@RobotKeyword
-	@ArgumentNames({"alias", "url", "headers={}", "cookies=None", "auth=None", "timeout=None", "proxies=None", "verify=False", "debug=False", "max_retries=3", "backoff_factor=0.1", "disable_warnings=0"})
-	public void createSession(String alias, String url, String...params) {
+
+	@RobotKeyword("Create a HTTP session to a server\n\n"
+			 + "``url`` Base url of the server\n\n"
+			 + "``alias`` Robot Framework alias to identify the session\n\n"
+			 + "``headers`` Dictionary of default headers\n\n"
+			 + "``auth`` List of username & password for HTTP Basic Auth\n\n"
+			 + "``timeout`` Connection timeout\n\n"
+			 + "\n\n"
+			 + "``proxies`` Dictionary that contains proxy urls for HTTP and HTTPS communication\n\n"
+			 + "``verify`` Whether the SSL cert will be verified. A CA_BUNDLE path can also be provided.\n\n"
+			 + "``debug`` Enable http verbosity option more information\n\n")
+	@ArgumentNames({ "alias", "url", "headers={}", "cookies=None", "auth=None", "timeout=None", "proxies=None",
+			"verify=False", "debug=False" })
+	public void createSession(String alias, String url, String... params) {
 		RestClient rc = new RestClient();
 		Map<String, String> headers = Robot.getParamsValue(params, 0, new HashMap<String, String>());
 		String verify = Robot.getParamsValue(params, 5, "False");
 		Boolean debug = Boolean.parseBoolean(Robot.getParamsValue(params, 6, "False"));
-		Authentication auth = Authentication.getAuthentication(Robot.getParamsValue(params, 2, (List<String>) new ArrayList<String>()));
+		Authentication auth = Authentication
+				.getAuthentication(Robot.getParamsValue(params, 2, (List<String>) new ArrayList<String>()));
 		rc.createSession(alias, url, headers, auth, verify, debug);
 	}
-	
-	@RobotKeyword
-	@ArgumentNames({"alias", "url", "headers={}", "cookies=None", "auth=None", "timeout=None", "proxies=None", "verify=False", "debug=False", "max_retries=3", "backoff_factor=0.1", "disable_warnings=0"})
-	public void createDigestSession(String alias, String url, String...params) {
+
+	@RobotKeyword("Create a HTTP session to a server\n\n"
+			 + "``url`` Base url of the server\n\n"
+			 + "``alias`` Robot Framework alias to identify the session\n\n"
+			 + "``headers`` Dictionary of default headers\n\n"
+			 + "``auth`` List of username & password for HTTP Digest Auth\n\n"
+			 + "``timeout`` Connection timeout\n\n"
+			 + "\n\n"
+			 + "``proxies`` Dictionary that contains proxy urls for HTTP and HTTPS communication\n\n"
+			 + "``verify`` Whether the SSL cert will be verified. A CA_BUNDLE path can also be provided.\n\n"
+			 + "``debug`` Enable http verbosity option more information\n\n")
+	@ArgumentNames({ "alias", "url", "headers={}", "cookies=None", "auth=None", "timeout=None", "proxies=None",
+			"verify=False", "debug=False" })
+	public void createDigestSession(String alias, String url, String... params) {
 		RestClient rc = new RestClient();
 		Map<String, String> headers = Robot.getParamsValue(params, 0, new HashMap<String, String>());
 		String verify = Robot.getParamsValue(params, 5, "False");
 		Boolean debug = Boolean.parseBoolean(Robot.getParamsValue(params, 6, "False"));
-		Authentication auth = Authentication.getAuthentication(Robot.getParamsValue(params, 2, (List<String>) new ArrayList<String>()), Authentication.Type.DIGEST);
+		Authentication auth = Authentication.getAuthentication(
+				Robot.getParamsValue(params, 2, (List<String>) new ArrayList<String>()), Authentication.Type.DIGEST);
 		rc.createSession(alias, url, headers, auth, verify, debug);
 	}
 
