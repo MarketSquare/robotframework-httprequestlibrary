@@ -22,9 +22,7 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.config.CookieSpecs;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpHead;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpUriRequest;
@@ -37,7 +35,6 @@ import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.impl.client.LaxRedirectStrategy;
 import org.apache.http.message.BasicNameValuePair;
 
 import com.github.hi_fi.httprequestlibrary.domain.Authentication;
@@ -110,15 +107,15 @@ public class RestClient {
 	public void makePutRequest(String alias, String uri, Object data, Map<String, String> parameters,
 			Map<String, String> headers, Map<String, String> files, Boolean allowRedirects) {
 		logger.debug("Making PUT request");
-		HttpPut postRequest = new HttpPut(this.buildUrl(alias, uri, parameters));
-		postRequest = this.setHeaders(postRequest, headers);
+		HttpPut putRequest = new HttpPut(this.buildUrl(alias, uri, parameters));
+		putRequest = this.setHeaders(putRequest, headers);
 		if (data.toString().length() > 0) {
 			logger.debug(data);
-			postRequest.setEntity(this.createDataEntity(data));
+			putRequest.setEntity(this.createDataEntity(data));
 		}
 		if (files.entrySet().size() > 0) {
 			logger.debug(files);
-			postRequest.setEntity(this.createFileEntity(files));
+			putRequest.setEntity(this.createFileEntity(files));
 		}
 		if (allowRedirects) {
 			Session session = this.getSession(alias);
@@ -126,7 +123,26 @@ public class RestClient {
 					session.getHttpHost(), true));
 		}
 		Session session = this.getSession(alias);
-		this.makeRequest(postRequest, session);
+		this.makeRequest(putRequest, session);
+	}
+	
+	public void makeDeleteRequest(String alias, String uri, Object data, Map<String, String> parameters,
+			Map<String, String> headers, Boolean allowRedirects) {
+		logger.debug("Making DELETE request");
+		HttpDeleteWithBody deleteRequest = new HttpDeleteWithBody(this.buildUrl(alias, uri, parameters));
+		deleteRequest = this.setHeaders(deleteRequest, headers);
+		if (data.toString().length() > 0) {
+			logger.debug(data);
+			deleteRequest.setEntity(this.createDataEntity(data));
+		}
+
+		if (allowRedirects) {
+			Session session = this.getSession(alias);
+			session.setClient(this.createHttpClient(session.getAuthentication(), session.getVerify(),
+					session.getHttpHost(), true));
+		}
+		Session session = this.getSession(alias);
+		this.makeRequest(deleteRequest, session);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -203,28 +219,7 @@ public class RestClient {
 		}
 
 		if (postRedirects) {
-			httpClientBuilder.setRedirectStrategy(new LaxRedirectStrategy() {
-				/**
-			     * Redirectable methods.
-			     */
-			    private String[] REDIRECT_METHODS = new String[] {
-			        HttpGet.METHOD_NAME,
-			        HttpPost.METHOD_NAME,
-			        HttpHead.METHOD_NAME,
-			        HttpDelete.METHOD_NAME,
-			        HttpPut.METHOD_NAME
-			    };
-
-			    @Override
-			    protected boolean isRedirectable(final String method) {
-			        for (final String m: REDIRECT_METHODS) {
-			            if (m.equalsIgnoreCase(method)) {
-			                return true;
-			            }
-			        }
-			        return false;
-			    }
-			});
+			httpClientBuilder.setRedirectStrategy(new CustomRedirectStrategy());
 		}
 		RequestConfig requestConfig = RequestConfig.custom().setCookieSpec(CookieSpecs.DEFAULT).build();
 		httpClientBuilder.setDefaultRequestConfig(requestConfig);
