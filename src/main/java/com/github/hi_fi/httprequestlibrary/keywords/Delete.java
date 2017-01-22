@@ -15,8 +15,6 @@ import com.github.hi_fi.httprequestlibrary.utils.RobotLogger;
 @RobotKeywords
 public class Delete {
 	
-	RobotLogger logger = new RobotLogger("Post");
-	
 	@RobotKeyword
 	@ArgumentNames({"alias", "uri", "data={}", "params={}", "headers={}", "allow_redirects=False", "timeout=0"})
 	public ResponseData deleteRequest(String alias, String uri, String...params) {

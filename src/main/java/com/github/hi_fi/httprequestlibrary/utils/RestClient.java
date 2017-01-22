@@ -23,6 +23,7 @@ import org.apache.http.client.config.CookieSpecs;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpOptions;
 import org.apache.http.client.methods.HttpPatch;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
@@ -84,9 +85,23 @@ public class RestClient {
 		this.makeRequest(getRequest, session);
 	}
 
+	public void makeOptionsRequest(String alias, String uri, Map<String, String> headers, Boolean allowRedirects) {
+		logger.debug("Making OPTIONS request");
+		HttpOptions patchRequest = new HttpOptions(this.buildUrl(alias, uri));
+		patchRequest = this.setHeaders(patchRequest, headers);
+		
+		if (allowRedirects) {
+			Session session = this.getSession(alias);
+			session.setClient(this.createHttpClient(session.getAuthentication(), session.getVerify(),
+					session.getHttpHost(), true));
+		}
+		Session session = this.getSession(alias);
+		this.makeRequest(patchRequest, session);
+	}
+
 	public void makePatchRequest(String alias, String uri, Object data, Map<String, String> headers,
 			Map<String, String> files, Boolean allowRedirects) {
-		logger.debug("Making POST request");
+		logger.debug("Making PATCH request");
 		HttpPatch patchRequest = new HttpPatch(this.buildUrl(alias, uri));
 		patchRequest = this.setHeaders(patchRequest, headers);
 		if (data.toString().length() > 0) {
@@ -253,7 +268,7 @@ public class RestClient {
 	private String buildUrl(String alias, String uri) {
 		return this.buildUrl(alias, uri, new HashMap<String, String>());
 	}
-	
+
 	private String buildUrl(String alias, String uri, Map<String, String> parameters) {
 		String url = this.getSession(alias).getUrl();
 		if (uri.length() > 0) {

@@ -1,8 +1,9 @@
 package com.github.hi_fi.httprequestlibrary.domain;
 
+import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.http.Header;
 
 import com.google.gson.Gson;
 
@@ -13,7 +14,13 @@ public class ResponseData {
 	public String content;
 	@SuppressWarnings("rawtypes")
 	public Map json;
+	public Map<String, String> headers = new HashMap<String, String>();
 
+	public void setHeaders(Header[] headerArray) {
+		for (Header header : headerArray) {
+			this.headers.put(header.getName(), header.getValue());
+		}
+	}
 
 	public int getStatusCode() {
 		return status_code;

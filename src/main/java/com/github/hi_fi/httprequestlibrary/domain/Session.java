@@ -55,6 +55,7 @@ public class Session {
 		try {
 			this.setResponseBody(EntityUtils.toString(response.getEntity(), "UTF-8"));
 			this.responseData.setStatusCode(response.getStatusLine().getStatusCode());
+			this.responseData.setHeaders(response.getAllHeaders());
 		} catch (ParseException e) {
 			throw new RuntimeException("Parsing exception. Message: "+e.getMessage());
 		} catch (IOException e) {
