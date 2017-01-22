@@ -26,3 +26,10 @@ Delete Request With Data
     Log  ${resp.content}
     Comment  Dictionary Should Contain Value  ${resp.json['data']}  bulkan
     Comment  Dictionary Should Contain Value  ${resp.json['data']}  evcimen
+    
+Delete Request With JSON Data
+    ${JSON_DATA}  Set Variable  {"file":{"path":"/logo1.png"},"token":"some-valid-oauth-token"}
+    Create Session   httpbin   http://httpbin.org
+    &{headers}=  Create Dictionary  Content-Type=application/json
+    ${resp}=   Delete Request   httpbin   /delete   data=${JSON_DATA}   headers=${headers}
+    Should Be Equal As Strings  ${JSON_DATA}  ${resp.json['data']}
