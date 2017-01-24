@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.apache.http.Header;
 
+import com.github.hi_fi.httprequestlibrary.keywords.Response;
 import com.google.gson.Gson;
 
 public class ResponseData {
@@ -12,8 +13,7 @@ public class ResponseData {
 	public int status_code;
 	public String text;
 	public String content;
-	@SuppressWarnings("rawtypes")
-	public Map json;
+	public Object json;
 	public Map<String, String> headers = new HashMap<String, String>();
 
 	public void setHeaders(Header[] headerArray) {
@@ -41,7 +41,8 @@ public class ResponseData {
 		this.text = text;
 		this.content = text;
 		try {
-			this.json = new Gson().fromJson(this.text, Map.class);
+		    Response response = new Response();
+			this.json = response.toJson(text);
 		} catch (Exception e) {
 		}
 	}
