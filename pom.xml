@@ -3,11 +3,11 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.github.hi-fi</groupId>
 	<artifactId>robotframework-httprequestlibrary</artifactId>
-	<version>0.0.3-SNAPSHOT</version>
+	<version>0.0.3</version>
 	<packaging>jar</packaging>
 
 	<name>robotframework-httprequestlibrary</name>
-	<description>A Robot Framework library + Java-agent for for Sikuli based UI testing</description>
+	<description>A Robot Framework library for HTTP request testing.</description>
 	<url>https://github.com/hi-fi/httprequestlibrary</url>
 
 	<distributionManagement>
