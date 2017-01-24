@@ -1,9 +1,5 @@
 package com.github.hi_fi.httprequestlibrary.keywords;
 
-import java.util.List;
-
-import java.util.Map;
-
 import org.robotframework.javalib.annotation.ArgumentNames;
 import org.robotframework.javalib.annotation.RobotKeyword;
 import org.robotframework.javalib.annotation.RobotKeywords;
@@ -29,12 +25,7 @@ public class Response {
 	@RobotKeyword("Convert a string to a JSON object.")
 	@ArgumentNames({"content"})
 	public Object toJson(String data) {
-	    if (data.trim().startsWith("{")) {
-		    return new Gson().fromJson(data.replace("u'", "'"), Map.class);
-	    } else if (data.trim().startsWith("[")) {
-	        return new Gson().fromJson(data.replace("u'", "'"), List.class);
-        }
-        return new Object();
+	    return new Gson().fromJson(data.replace("u'", "'"), Object.class);
 	}
 	
 	@RobotKeyword("Prints out given string as pretty printed JSON.")
