@@ -8,7 +8,7 @@
 
 	<name>robotframework-httprequestlibrary</name>
 	<description>A Robot Framework library for HTTP request testing.</description>
-	<url>https://github.com/hi-fi/httprequestlibrary</url>
+	<url>https://github.com/hi-fi/robotframework-httprequestlibrary</url>
 
 	<distributionManagement>
 		<snapshotRepository>
@@ -19,7 +19,7 @@
 
 	<issueManagement>
 		<system>GitHub Issues</system>
-		<url>https://github.com/hi-fi/httprequestlibrary/issues</url>
+		<url>https://github.com/hi-fi/robotframework-httprequestlibrary/issues</url>
 	</issueManagement>
 
 	<licenses>
@@ -30,9 +30,9 @@
 		</license>
 	</licenses>
 	<scm>
-		<url>https://github.com/hi-fi/httprequestlibrary</url>
-		<connection>scm:git:git://github.com/hi-fi/httprequestlibrary.git</connection>
-		<developerConnection>scm:git:git@github.com:hi-fi/httprequestlibrary.git</developerConnection>
+		<url>https://github.com/hi-fi/robotframework-httprequestlibrary</url>
+		<connection>scm:git:git://github.com/hi-fi/robotframework-httprequestlibrary.git</connection>
+		<developerConnection>scm:git:git@github.com:hi-fi/robotframework-httprequestlibrary.git</developerConnection>
 	</scm>
 
 	<developers>
@@ -270,7 +270,7 @@
 						<configuration>
 							<logLevel>DEBUG</logLevel>
 							<extraPathDirectories>
-								<extraPathDirectory>target/httprequestlibrary-${project.version}.jar</extraPathDirectory>
+								<extraPathDirectory>target/robotframework-httprequestlibrary-${project.version}.jar</extraPathDirectory>
 							</extraPathDirectories>
 						</configuration>
 					</execution>
