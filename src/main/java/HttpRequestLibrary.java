@@ -6,6 +6,7 @@ public class HttpRequestLibrary extends AnnotationLibrary {
 
 	public HttpRequestLibrary() {
 		super("com/github/hi_fi/httprequestlibrary/keywords/**");
+		System.setProperty("org.apache.commons.logging.Log", "com.github.hi_fi.httprequestlibrary.utils.RobotLogger");
 	}
 
 	@Override
