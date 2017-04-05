@@ -67,7 +67,7 @@
 		<dependency>
 			<groupId>com.github.hi-fi</groupId>
 			<artifactId>httpclient</artifactId>
-			<version>0.0.1</version>
+			<version>${httpclient.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>commons-io</groupId>
