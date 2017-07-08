@@ -17,6 +17,19 @@
 		</snapshotRepository>
 	</distributionManagement>
 
+	<repositories>
+		<repository>
+			<id>snapshots-repo</id>
+			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
+			<releases>
+				<enabled>false</enabled>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</repository>
+	</repositories>
+
 	<issueManagement>
 		<system>GitHub Issues</system>
 		<url>https://github.com/hi-fi/robotframework-httprequestlibrary/issues</url>
@@ -165,7 +178,7 @@
 					<plugin>
 						<groupId>org.robotframework</groupId>
 						<artifactId>robotframework-maven-plugin</artifactId>
-						<version>1.4.6</version>
+						<version>1.4.7</version>
 						<executions>
 							<execution>
 								<id>html</id>
