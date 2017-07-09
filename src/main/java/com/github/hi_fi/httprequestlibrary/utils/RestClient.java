@@ -40,8 +40,8 @@ import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
 
-import com.github.hi_fi.httprequestlibrary.domain.Authentication;
-import com.github.hi_fi.httprequestlibrary.domain.Session;
+import com.github.hi_fi.httpclient.domain.Authentication;
+import com.github.hi_fi.httpclient.domain.Session;
 
 public class RestClient {
 

@@ -7,8 +7,8 @@ import org.robotframework.javalib.annotation.ArgumentNames;
 import org.robotframework.javalib.annotation.RobotKeyword;
 import org.robotframework.javalib.annotation.RobotKeywords;
 
-import com.github.hi_fi.httprequestlibrary.domain.ResponseData;
-import com.github.hi_fi.httprequestlibrary.utils.RestClient;
+import com.github.hi_fi.httpclient.domain.ResponseData;
+import com.github.hi_fi.httpclient.RestClient;
 import com.github.hi_fi.httprequestlibrary.utils.Robot;
 
 @RobotKeywords
