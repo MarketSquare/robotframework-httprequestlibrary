@@ -58,7 +58,7 @@
 
 	<properties>
 		<maven.compiler.source>1.6</maven.compiler.source>
-	    <maven.compiler.target>1.6</maven.compiler.target>
+		<maven.compiler.target>1.6</maven.compiler.target>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<keywords.class>HttpRequestLibrary</keywords.class>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -276,7 +276,7 @@
 			<plugin>
 				<groupId>org.robotframework</groupId>
 				<artifactId>robotframework-maven-plugin</artifactId>
-				<version>1.4.6</version>
+				<version>1.4.7</version>
 				<executions>
 					<execution>
 						<goals>
@@ -287,6 +287,9 @@
 							<extraPathDirectories>
 								<extraPathDirectory>target/robotframework-httprequestlibrary-${project.version}.jar</extraPathDirectory>
 							</extraPathDirectories>
+							<nonCriticalTags>
+								<nonCriticalTag>Non-Critical</nonCriticalTag>
+							</nonCriticalTags>
 						</configuration>
 					</execution>
 					<execution>

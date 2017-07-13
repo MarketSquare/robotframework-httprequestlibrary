@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import org.robotframework.javalib.annotation.ArgumentNames;
 import org.robotframework.javalib.annotation.RobotKeyword;
@@ -27,7 +28,7 @@ public class Session {
 			 + "``proxy`` Dictionary that contains proxy information. Only one proxy supported per session. Dictionary should contain at least following keys: *protocol*, *host* and *port* of proxy. It can also contain *username* and *password*\n\n"
 			 + "``verify`` Whether the SSL cert will be verified. A CA_BUNDLE path can also be provided.\n\n"
 			 + "``debug`` Enable http verbosity option more information\n\n")
-	@ArgumentNames({ "alias", "url", "headers={}", "cookies=None", "auth=None", "timeout=None", "proxies=None",
+	@ArgumentNames({ "alias", "url", "headers={}", "cookies=None", "auth=None", "timeout=None", "proxy=None",
 			"verify=False", "debug=False" })
 	public void createSession(String alias, String url, String... params) {
 		RestClient rc = new RestClient();
@@ -39,6 +40,7 @@ public class Session {
 		Authentication auth = Authentication
 				.getAuthentication(Robot.getParamsValue(params, 2, (List<String>) new ArrayList<String>()));
 		rc.createSession(alias, url, headers, auth, verify, debug, proxy);
+		System.out.println(rc.getSession(alias).getProxy().toString());
 	}
 
 	@RobotKeyword("Create a HTTP session to a server\n\n"
@@ -51,7 +53,7 @@ public class Session {
 			 + "``proxy`` Dictionary that contains proxy information. Only one proxy supported per session. Dictionary should contain at least following keys: *protocol*, *host* and *port* of proxy. It can also contain *username* and *password*\n\n"
 			 + "``verify`` Whether the SSL cert will be verified. A CA_BUNDLE path can also be provided.\n\n"
 			 + "``debug`` Enable http verbosity option more information\n\n")
-	@ArgumentNames({ "alias", "url", "headers={}", "cookies=None", "auth=None", "timeout=None", "proxies=None",
+	@ArgumentNames({ "alias", "url", "headers={}", "cookies=None", "auth=None", "timeout=None", "proxy=None",
 			"verify=False", "debug=False" })
 	public void createDigestSession(String alias, String url, String... params) {
 		RestClient rc = new RestClient();
