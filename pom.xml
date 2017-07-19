@@ -17,6 +17,19 @@
 		</snapshotRepository>
 	</distributionManagement>
 
+	<repositories>
+		<repository>
+			<id>snapshots-repo</id>
+			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
+			<releases>
+				<enabled>false</enabled>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</repository>
+	</repositories>
+
 	<issueManagement>
 		<system>GitHub Issues</system>
 		<url>https://github.com/hi-fi/robotframework-httprequestlibrary/issues</url>
@@ -44,11 +57,13 @@
 	</developers>
 
 	<properties>
+		<maven.compiler.source>1.6</maven.compiler.source>
+		<maven.compiler.target>1.6</maven.compiler.target>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<keywords.class>HttpRequestLibrary</keywords.class>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<powermock.version>1.6.5</powermock.version>
-		<httpclient.version>0.0.1</httpclient.version>
+		<httpclient.version>0.0.2</httpclient.version>
 	</properties>
 
 	<dependencies>
@@ -165,7 +180,7 @@
 					<plugin>
 						<groupId>org.robotframework</groupId>
 						<artifactId>robotframework-maven-plugin</artifactId>
-						<version>1.4.6</version>
+						<version>1.4.7</version>
 						<executions>
 							<execution>
 								<id>html</id>
@@ -261,7 +276,7 @@
 			<plugin>
 				<groupId>org.robotframework</groupId>
 				<artifactId>robotframework-maven-plugin</artifactId>
-				<version>1.4.6</version>
+				<version>1.4.7</version>
 				<executions>
 					<execution>
 						<goals>
@@ -272,6 +287,9 @@
 							<extraPathDirectories>
 								<extraPathDirectory>target/robotframework-httprequestlibrary-${project.version}.jar</extraPathDirectory>
 							</extraPathDirectories>
+							<nonCriticalTags>
+								<nonCriticalTag>Non-Critical</nonCriticalTag>
+							</nonCriticalTags>
 						</configuration>
 					</execution>
 					<execution>

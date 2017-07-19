@@ -1,5 +1,6 @@
 package com.github.hi_fi.httprequestlibrary.utils;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -35,10 +36,16 @@ public class Robot {
 	@SuppressWarnings({ "unchecked", "resource" })
 	public static Map<String, Object> parseRobotDictionary(String dictionary) {
 		logger.debug("Dictionary going to be parsed to Map: " + dictionary);
-
+		Map<String, Object> json = new HashMap<String, Object>();
+		try {
 		PythonInterpreter py = new PythonInterpreter();
 		py.exec("import json");
-		Map<String, Object> json = new Gson().fromJson(py.eval("json.dumps(" + dictionary + ")").toString(), Map.class);
+		json = new Gson().fromJson(py.eval("json.dumps(" + dictionary + ")").toString(), Map.class);
+		} catch (RuntimeException e)  {
+			logger.error(String.format("Parsing of dictionary %s failed.", dictionary));
+			throw e;
+		}
+		
 		return json;
 	}
 
