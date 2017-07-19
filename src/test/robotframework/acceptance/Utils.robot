@@ -29,6 +29,30 @@ Set Pretty Print to non-Boolean value
     Should Contain    ${output}    "key_two": "this is a test string"
     Should Not Contain    ${output}    {u'key_two': u'this is a test string', u'key_one': u'true'}
     
+Pretty Print Json List
+    [Tags]    json
+    ${jsonString}    Set Variable    [{"key_one": "true","key_two": "this is a test string"}]
+    ${output}    Pretty Print Json    ${jsonString}
+    Log    ${output}
+    Should Contain    ${output}    "key_one": "true"
+    Should Contain    ${output}    "key_two": "this is a test string"
+    Should Not Contain    ${output}    ${jsonString}
+   
+
+Json Parsing Tests
+    [Tags]    json
+    ${jsonString}    Set Variable    {"key_one": "true","key_two": "this is a test string"}
+    ${json}    To Json    ${jsonString}
+    Should Be Equal As Strings    ${json['key_one']}    true
+    Should Be Equal As Strings    ${json['key_two']}    this is a test string
+
+Json Parsing Tests With List
+    [Tags]    json
+    ${jsonString}    Set Variable    [{"key_one": "true","key_two": "this is a test string"}]
+    ${json}    To Json    ${jsonString}
+    Should Be Equal As Strings    ${json[0]['key_one']}    true
+    Should Be Equal As Strings    ${json[0]['key_two']}    this is a test string
+    
     
 *** Keywords ***
 Setup Suite

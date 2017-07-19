@@ -14,6 +14,7 @@ import com.github.hi_fi.httpclient.domain.Authentication;
 import com.github.hi_fi.httpclient.domain.Proxy;
 import com.github.hi_fi.httpclient.RestClient;
 import com.github.hi_fi.httprequestlibrary.utils.Robot;
+import com.github.hi_fi.httprequestlibrary.utils.RobotLogger;
 
 @RobotKeywords
 public class Session {
@@ -37,10 +38,10 @@ public class Session {
 		Proxy proxy = new Proxy(Robot.getParamsValue(params, 4, new HashMap<String, String>()));
 		String verify = Robot.getParamsValue(params, 5, "False");
 		Boolean debug = Boolean.parseBoolean(Robot.getParamsValue(params, 6, "False"));
+		RobotLogger.setDebugToAll(debug);
 		Authentication auth = Authentication
 				.getAuthentication(Robot.getParamsValue(params, 2, (List<String>) new ArrayList<String>()));
 		rc.createSession(alias, url, headers, auth, verify, debug, proxy);
-		System.out.println(rc.getSession(alias).getProxy().toString());
 	}
 
 	@RobotKeyword("Create a HTTP session to a server\n\n"
@@ -58,11 +59,13 @@ public class Session {
 	public void createDigestSession(String alias, String url, String... params) {
 		RestClient rc = new RestClient();
 		Map<String, String> headers = Robot.getParamsValue(params, 0, new HashMap<String, String>());
+		Proxy proxy = new Proxy(Robot.getParamsValue(params, 4, new HashMap<String, String>()));
 		String verify = Robot.getParamsValue(params, 5, "False");
 		Boolean debug = Boolean.parseBoolean(Robot.getParamsValue(params, 6, "False"));
+		RobotLogger.setDebugToAll(debug);
 		Authentication auth = Authentication.getAuthentication(
 				Robot.getParamsValue(params, 2, (List<String>) new ArrayList<String>()), Authentication.Type.DIGEST);
-		rc.createSession(alias, url, headers, auth, verify, debug);
+		rc.createSession(alias, url, headers, auth, verify, debug, proxy);
 	}
 
 }

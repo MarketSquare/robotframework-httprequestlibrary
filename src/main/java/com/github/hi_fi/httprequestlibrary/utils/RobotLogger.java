@@ -33,8 +33,10 @@ public class RobotLogger implements Log {
     protected volatile Level currentLogLevel;
     
     static protected final String systemPrefix = "org.apache.commons.logging.robotlogger.";
+    
+    private static Boolean debugOverride = false;
 	
-	public RobotLogger(String name) {
+	public RobotLogger(String name) {		
 		logName = name;
 		
 		// Set initial log level
@@ -58,6 +60,7 @@ public class RobotLogger implements Log {
         if (lvl != null) {
         	setLevel(Level.valueOf(lvl.toUpperCase()));
         }
+        this.debug("Enabled logger for: "+logName+" with level: "+lvl);
 	}
 
 	public static void logHTML(Object log) {
@@ -104,7 +107,7 @@ public class RobotLogger implements Log {
 	}
 
 	public boolean isDebugEnabled() {
-		return currentLogLevel.getLevel() <= Level.DEBUG.getLevel();
+		return debugOverride || currentLogLevel.getLevel() <= Level.DEBUG.getLevel();
 	}
 
 	public boolean isErrorEnabled() {
@@ -154,5 +157,9 @@ public class RobotLogger implements Log {
     
     public void setLevel(Level currentLogLevel) {
         this.currentLogLevel = currentLogLevel;
+    }
+    
+    public static void setDebugToAll(Boolean debug) {
+    	debugOverride = debug;
     }
 }
