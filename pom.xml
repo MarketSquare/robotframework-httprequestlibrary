@@ -63,7 +63,7 @@
 		<keywords.class>HttpRequestLibrary</keywords.class>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<powermock.version>1.6.5</powermock.version>
-		<httpclient.version>0.0.2-SNAPSHOT</httpclient.version>
+		<httpclient.version>0.0.2</httpclient.version>
 	</properties>
 
 	<dependencies>
