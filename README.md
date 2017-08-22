@@ -6,9 +6,9 @@ Robot Framework's library to test REST interfaces.
 Library is mostly following structure of [Requests-library](https://github.com/bulkan/robotframework-requests).
 
 * More information about this library can be found in the
-  [Keyword Documentation](http://search.maven.org/remotecontent?filepath=com/github/hi-fi/robotframework-httprequestlibrary/0.0.6/robotframework-httprequestlibrary-0.0.6.html).
+  [Keyword Documentation](http://search.maven.org/remotecontent?filepath=com/github/hi-fi/robotframework-httprequestlibrary/0.0.7/robotframework-httprequestlibrary-0.0.7.html).
 * For keyword completion in RIDE you can download this
-  [Library Specs](http://search.maven.org/remotecontent?filepath=com/github/hi-fi/robotframework-httprequestlibrary/0.0.6/robotframework-httprequestlibrary-0.0.6.xml)
+  [Library Specs](http://search.maven.org/remotecontent?filepath=com/github/hi-fi/robotframework-httprequestlibrary/0.0.7/robotframework-httprequestlibrary-0.0.7.xml)
   and place it in your PYTHONPATH.
 
 Usage
@@ -20,12 +20,12 @@ your pom.xml:
     <dependency>
         <groupId>com.github.hi-fi</groupId>
         <artifactId>robotframework-httprequestlibrary</artifactId>
-        <version>0.0.6</version>
+        <version>0.0.7</version>
     </dependency>
     
 With Gradle, library can be use by importing it as a dependency in build.gradle:
 
-    runtime('com.github.hi-fi:robotframework-httprequestlibrary:0.0.6')
+    runtime('com.github.hi-fi:robotframework-httprequestlibrary:0.0.7')
     
 Library import in Robot tests can be done with:
 
