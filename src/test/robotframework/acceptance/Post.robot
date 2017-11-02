@@ -52,6 +52,13 @@ Post Request With Unicode Data
     &{headers}=  Create Dictionary  Content-Type=application/x-www-form-urlencoded
     ${resp}=  Post Request  httpbin  /post  data=${data}  headers=${headers}
     Dictionary Should Contain Value  ${resp.json['form']}  度假村
+    
+Post With Unicode Data Without Dictionary
+    Create Session  httpbin  http://httpbin.org    debug=True
+    ${data}=  Set Variable    度假村
+    ${resp}=  Post Request  httpbin  /post  data=${data}
+    Log    ${resp}
+    Should Contain  ${resp.text}  \\u5ea6\\u5047\\u6751
 
 Post Request With Binary Data in Dictionary
     Create Session  httpbin  http://httpbin.org    debug=True
