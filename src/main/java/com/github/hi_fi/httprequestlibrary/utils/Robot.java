@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.python.util.PythonInterpreter;
 
 import com.google.gson.Gson;
@@ -25,7 +26,7 @@ public class Robot {
 			if (defaultValue instanceof Map) {
 				value = (T) parseRobotDictionary(givenValue);
 			} else if (defaultValue instanceof String) {
-				value = (T) givenValue;
+				value = (T) StringEscapeUtils.escapeJava(givenValue);
 			} else if (defaultValue instanceof List) {
 				value = (T) parseRobotList(givenValue);
 			}

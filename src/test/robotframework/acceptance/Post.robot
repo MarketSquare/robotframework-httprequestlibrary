@@ -63,12 +63,12 @@ Post With Unicode Data Without Dictionary
 Post Request With Binary Data in Dictionary
     Create Session  httpbin  http://httpbin.org    debug=True
     ${file_data}=  Get Binary File  ${CURDIR}${/}data.json
-    &{data}=  Create Dictionary  name=${file_data.strip()}
+    ${data}=  Create Dictionary  name=${file_data.strip()}
     &{headers}=  Create Dictionary  Content-Type=application/x-www-form-urlencoded
     ${resp}=  Post Request  httpbin  /post  data=${data}  headers=${headers}
     Log  ${resp.json['form']}
-    Log  ${resp.json['form']['name']}
-    Should Contain  ${resp.json['form']['name']}  \u5ea6\u5047\u6751
+    Log  ${resp.json['form'].toString()}
+    Should Contain  ${resp.json['form'].toString()}  \\\\xe5\\\\xba\\\\xa6\\\\xe5\\\\x81\\\\x87\\\\xe6\\\\x9d\\\\x91\
 
 Post Request With Binary Data
     Create Session  httpbin  http://httpbin.org    debug=True

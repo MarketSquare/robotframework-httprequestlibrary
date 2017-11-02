@@ -30,7 +30,9 @@ public class Post {
 	public ResponseData postRequest(String alias, String uri, String... params) {
 		RestClient rc = new RestClient();
 		Object dataList = (String) Robot.getParamsValue(params, 0, "");
+        System.out.println(dataList);
 		if (Robot.isDictionary(dataList.toString())) {
+		    System.out.println(dataList);
 			dataList = (Map<String, String>) Robot.getParamsValue(params, 0,
 					(Map<String, String>) new HashMap<String, String>());
 		}
