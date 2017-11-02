@@ -1,12 +1,8 @@
 language: java
-addons:
-  apt:
-    packages:
-      - openjdk-6-jdk
+
 jdk:
   - oraclejdk8
   - openjdk7
-  - openjdk6
  
 stages:
   - test
