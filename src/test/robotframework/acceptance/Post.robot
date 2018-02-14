@@ -70,11 +70,11 @@ Post Request With Binary Data in Dictionary
     Log  ${resp.json['form']['name']}
     Should Contain  ${resp.json['form']['name']}  \u5ea6\u5047\u6751
 
-Post Request With Binary Data
+Post Request With Data From File
     Create Session  httpbin  http://httpbin.org    debug=True
-    ${data}=  Get Binary File  ${CURDIR}${/}data.json
+    ${data}=  Get File  ${CURDIR}${/}data.json
     &{headers}=  Create Dictionary  Content-Type=application/x-www-form-urlencoded
-    ${resp}=  Post Request  httpbin  /post  data=${data}  headers=${headers}
+    ${resp}=  Post Request  httpbin  /post  data=${data.strip()}  headers=${headers}
     Log  ${resp.json['form'].toString()}
     Should Contain  ${resp.json['form'].toString()}  度假村
 
