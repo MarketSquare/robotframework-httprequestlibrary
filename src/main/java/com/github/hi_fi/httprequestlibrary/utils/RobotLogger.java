@@ -61,7 +61,12 @@ public class RobotLogger implements Log {
     }
 
     public static void logHTML(Object log) {
-        pythonInterpreter.get().eval("logger.info(repr('" + convertStringToLogger(log) + "'), html=true)");
+        try {
+            pythonInterpreter.get().eval("logger.info(repr('" + convertStringToLogger(log) + "'), html=true)");
+        } catch (Exception e) {
+            //Python logger fails with e.g. Chinese characters, so this done as fallback
+            System.out.println("*HTML* "+log);
+        }
     }
 
     public void debug(Object log) {
@@ -81,7 +86,14 @@ public class RobotLogger implements Log {
     }
 
     public void error(Object log) {
-        pythonInterpreter.get().eval("logger.error(repr('" + convertStringToLogger(log) + "')");
+        try {
+            pythonInterpreter.get().eval("logger.error('" + convertStringToLogger(log) + "')");
+        } catch (Exception e) {
+            //Python logger fails with e.g. Chinese characters, so this done as fallback
+            if (log != null) {
+                System.out.println("*ERROR* "+log);
+            }
+        }
     }
 
     public void error(Object message, Throwable t) {
@@ -98,7 +110,12 @@ public class RobotLogger implements Log {
     }
 
     public void info(Object log) {
-        pythonInterpreter.get().eval("logger.info(repr('" + convertStringToLogger(log) + "')");
+        try {
+            pythonInterpreter.get().eval("logger.info('" + convertStringToLogger(log) + "')");
+        } catch (Exception e) {
+            //Python logger fails with e.g. Chinese characters, so this done as fallback
+            System.out.println("*INFO* "+log);
+        }
     }
 
     public void info(Object message, Throwable t) {
@@ -107,7 +124,12 @@ public class RobotLogger implements Log {
     }
 
     public void trace(Object log) {
-        pythonInterpreter.get().eval("logger.trace(repr('" + convertStringToLogger(log) + "')");
+        try {
+            pythonInterpreter.get().eval("logger.trace('" + convertStringToLogger(log) + "')");
+        } catch (Exception e) {
+            //Python logger fails with e.g. Chinese characters, so this done as fallback
+            System.out.println("*TRACE* "+log);
+        }
     }
 
     public void trace(Object message, Throwable t) {
@@ -116,7 +138,12 @@ public class RobotLogger implements Log {
     }
 
     public void warn(Object log) {
-        pythonInterpreter.get().eval("logger.warn(repr('" + convertStringToLogger(log) + "')");
+        try {
+            pythonInterpreter.get().eval("logger.warn('" + convertStringToLogger(log) + "')");
+        } catch (Exception e) {
+            //Python logger fails with e.g. Chinese characters, so this done as fallback
+            System.out.println("*WARN* "+log);
+        }
     }
 
     public void warn(Object message, Throwable t) {
