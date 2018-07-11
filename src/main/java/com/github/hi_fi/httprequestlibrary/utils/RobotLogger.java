@@ -2,44 +2,37 @@ package com.github.hi_fi.httprequestlibrary.utils;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.commons.logging.Log;
+import org.python.util.PythonInterpreter;
 
 public class RobotLogger implements Log {
-	
-	public enum Level {
-			ALL(0),
-			TRACE(1),
-			DEBUG(2),
-			INFO(3),
-			WARN(4),
-			ERROR(5),
-			FATAL(6),
-			NONE(7);
-		private int order;
-		Level(int order) {
-			this.order = order;
-		}
-		
-		public int getLevel() {
-			return this.order;
-		}
-			
-	}
-	
-	
-	
-	/** The name of this simple log instance */
+
+    public enum Level {
+        ALL(0), TRACE(1), DEBUG(2), INFO(3), WARN(4), ERROR(5), FATAL(6), NONE(7);
+        private int order;
+
+        Level(int order) {
+            this.order = order;
+        }
+
+        public int getLevel() {
+            return this.order;
+        }
+
+    }
+
+    /** The name of this simple log instance */
     protected volatile String logName = null;
     /** The current log level */
-    protected volatile Level currentLogLevel;
-    
+    protected static volatile Level currentLogLevel;
+
+    protected static volatile Boolean debugOverride;
+
     static protected final String systemPrefix = "org.apache.commons.logging.robotlogger.";
-    
-    private static Boolean debugOverride = false;
-	
-	public RobotLogger(String name) {		
-		logName = name;
-		
-		// Set initial log level
+
+    public RobotLogger(String name) {
+        logName = name;
+
+        // Set initial log level
         // Used to be: set default log level to ERROR
         // IMHO it should be lower, but at least info ( costin ).
         setLevel(Level.INFO);
@@ -47,104 +40,118 @@ public class RobotLogger implements Log {
         // Set log level from properties
         String lvl = getStringProperty(systemPrefix + "log." + logName);
         int i = String.valueOf(name).lastIndexOf(".");
-        while(null == lvl && i > -1) {
-            name = name.substring(0,i);
+        while (null == lvl && i > -1) {
+            name = name.substring(0, i);
             lvl = getStringProperty(systemPrefix + "log." + name);
             i = String.valueOf(name).lastIndexOf(".");
         }
 
-        if(null == lvl) {
-            lvl =  getStringProperty(systemPrefix + "defaultlog");
+        try {
+            lvl = Robot.getRobotVariable("LOG LEVEL", "INFO");
+        } catch (Exception e) {
+            // Not doing anything. Meaning logging is done with default level set from
+            // startup parameter or from tests before class initialization
         }
-        
-        if (lvl != null) {
-        	setLevel(Level.valueOf(lvl.toUpperCase()));
+        if (null == lvl) {
+            lvl = getStringProperty(systemPrefix + "defaultlog");
+            lvl = lvl == null ? "INFO" : lvl;
         }
-        this.debug("Enabled logger for: "+logName+" with level: "+lvl);
-	}
+        setLevel(Level.valueOf(lvl.toUpperCase()));
+        this.debug("Enabled logger for: " + logName + " with level: " + lvl);
+    }
 
-	public static void logHTML(Object log) {
-		System.out.println("*HTML* "+log);
-	}
-	
-	public void error(Object log) {
-		System.out.println("*ERROR* "+log);
-	}
-	
-	public void debug(Object log) {
-		System.out.println("*DEBUG* "+log);
-	}
-	
-	public void trace(Object log) {
-		System.out.println("*TRACE* "+log);
-	}
-	
-	public void info(Object log) {
-		System.out.println("*INFO* "+log);
-	}
+    public static void logHTML(Object log) {
+        try {
+            pythonInterpreter.get().eval("logger.info(repr('" + convertStringToLogger(log) + "'), html=true)");
+        } catch (Exception e) {
+            //Python logger fails with e.g. Chinese characters, so this done as fallback
+            System.out.println("*HTML* "+log);
+        }
+    }
 
-	public void debug(Object message, Throwable t) {
-		System.out.println("*DEBUG* "+message);
-		System.out.println("*DEBUG* "+ExceptionUtils.getStackTrace(t));
-	}
+    public void debug(Object log) {
+        if (this.isDebugEnabled()) {
+            try {
+                pythonInterpreter.get().eval("logger.debug('" + convertStringToLogger(log) + "')");
+            } catch (Exception e) {
+                //Python logger fails with e.g. Chinese characters, so this done as fallback
+                System.out.println("*DEBUG* "+log);
+            }
+        }
+    }
 
-	public void error(Object message, Throwable t) {
-		System.out.println("*ERROR* "+message);
-		System.out.println("*ERROR* "+ExceptionUtils.getStackTrace(t));
-	}
+    public void debug(Object message, Throwable t) {
+        this.debug(message);
+        this.debug(ExceptionUtils.getStackTrace(t));
+    }
 
-	public void fatal(Object message) {
-		this.error(message);
-	}
+    public void error(Object log) {
+        try {
+            pythonInterpreter.get().eval("logger.error('" + convertStringToLogger(log) + "')");
+        } catch (Exception e) {
+            //Python logger fails with e.g. Chinese characters, so this done as fallback
+            if (log != null) {
+                System.out.println("*ERROR* "+log);
+            }
+        }
+    }
 
-	public void fatal(Object message, Throwable t) {
-		this.error(message, t);
-	}
+    public void error(Object message, Throwable t) {
+        this.error(message);
+        this.error(ExceptionUtils.getStackTrace(t));
+    }
 
-	public void info(Object message, Throwable t) {
-		System.out.println("*INFO* "+message);
-		System.out.println("*INFO* "+ExceptionUtils.getStackTrace(t));
-	}
+    public void fatal(Object message) {
+        this.error(message);
+    }
 
-	public boolean isDebugEnabled() {
-		return debugOverride || currentLogLevel.getLevel() <= Level.DEBUG.getLevel();
-	}
+    public void fatal(Object message, Throwable t) {
+        this.error(message, t);
+    }
 
-	public boolean isErrorEnabled() {
-		return currentLogLevel.getLevel() <= Level.ERROR.getLevel();
-	}
+    public void info(Object log) {
+        try {
+            pythonInterpreter.get().eval("logger.info('" + convertStringToLogger(log) + "')");
+        } catch (Exception e) {
+            //Python logger fails with e.g. Chinese characters, so this done as fallback
+            System.out.println("*INFO* "+log);
+        }
+    }
 
-	public boolean isFatalEnabled() {
-		return currentLogLevel.getLevel() <= Level.FATAL.getLevel();
-	}
+    public void info(Object message, Throwable t) {
+        this.info(message);
+        this.info(ExceptionUtils.getStackTrace(t));
+    }
 
-	public boolean isInfoEnabled() {
-		return currentLogLevel.getLevel() <= Level.INFO.getLevel();
-	}
+    public void trace(Object log) {
+        try {
+            pythonInterpreter.get().eval("logger.trace('" + convertStringToLogger(log) + "')");
+        } catch (Exception e) {
+            //Python logger fails with e.g. Chinese characters, so this done as fallback
+            System.out.println("*TRACE* "+log);
+        }
+    }
 
-	public boolean isTraceEnabled() {
-		return currentLogLevel.getLevel() <= Level.TRACE.getLevel();
-	}
+    public void trace(Object message, Throwable t) {
+        this.trace(message);
+        this.trace(ExceptionUtils.getStackTrace(t));
+    }
 
-	public boolean isWarnEnabled() {
-		return currentLogLevel.getLevel() <= Level.WARN.getLevel();
-	}
+    public void warn(Object log) {
+        try {
+            pythonInterpreter.get().eval("logger.warn('" + convertStringToLogger(log) + "')");
+        } catch (Exception e) {
+            //Python logger fails with e.g. Chinese characters, so this done as fallback
+            System.out.println("*WARN* "+log);
+        }
+    }
 
-	public void trace(Object message, Throwable t) {
-		System.out.println("*TRACE* "+message);
-		System.out.println("*TRACE* "+ExceptionUtils.getStackTrace(t));
-	}
+    public void warn(Object message, Throwable t) {
+        this.warn(message);
+        this.warn(ExceptionUtils.getStackTrace(t));
 
-	public void warn(Object message) {
-		System.out.println("*WARN* "+message);
-	}
+    }
 
-	public void warn(Object message, Throwable t) {
-		System.out.println("*WARN* "+message);
-		System.out.println("*WARN* "+ExceptionUtils.getStackTrace(t));
-		
-	}
-	
     private static String getStringProperty(String name) {
         String prop = null;
         try {
@@ -154,12 +161,56 @@ public class RobotLogger implements Log {
         }
         return prop;
     }
-    
+
     public void setLevel(Level currentLogLevel) {
-        this.currentLogLevel = currentLogLevel;
+        RobotLogger.currentLogLevel = currentLogLevel;
+    }
+
+    protected static ThreadLocal<PythonInterpreter> pythonInterpreter = new ThreadLocal<PythonInterpreter>() {
+
+        @Override
+        protected PythonInterpreter initialValue() {
+            PythonInterpreter pythonInterpreter = new PythonInterpreter();
+            pythonInterpreter.exec("from robot.api import logger");
+            return pythonInterpreter;
+        }
+    };
+
+    public static void setDebugToAll(Boolean debug) {
+        RobotLogger.debugOverride = debug;
+    }
+
+    public boolean isDebugEnabled() {
+        try {
+            return RobotLogger.debugOverride || currentLogLevel.getLevel() <= Level.DEBUG.getLevel();
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    public boolean isErrorEnabled() {
+        return currentLogLevel.getLevel() <= Level.ERROR.getLevel();
+    }
+
+    public boolean isFatalEnabled() {
+        return currentLogLevel.getLevel() <= Level.FATAL.getLevel();
+    }
+
+    public boolean isInfoEnabled() {
+        return currentLogLevel.getLevel() <= Level.INFO.getLevel();
+    }
+
+    public boolean isTraceEnabled() {
+        return currentLogLevel.getLevel() <= Level.TRACE.getLevel();
+    }
+
+    public boolean isWarnEnabled() {
+        return currentLogLevel.getLevel() <= Level.WARN.getLevel();
     }
     
-    public static void setDebugToAll(Boolean debug) {
-    	debugOverride = debug;
+    private static String convertStringToLogger(Object log) {
+        return log.toString().replace("'", "\\\'").replace("\\", "\\\\");
     }
+    
+
 }
