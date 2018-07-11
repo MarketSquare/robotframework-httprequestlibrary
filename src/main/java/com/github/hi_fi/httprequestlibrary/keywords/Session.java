@@ -34,7 +34,6 @@ public class Session {
 	public void createSession(String alias, String url, String... params) {
 		RestClient rc = new RestClient();
 		Map<String, String> headers = Robot.getParamsValue(params, 0, new HashMap<String, String>());
-		
 		Proxy proxy = new Proxy(Robot.getParamsValue(params, 4, new HashMap<String, String>()));
 		String verify = Robot.getParamsValue(params, 5, "False");
 		Boolean debug = Boolean.parseBoolean(Robot.getParamsValue(params, 6, "False"));
