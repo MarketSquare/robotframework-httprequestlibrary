@@ -53,18 +53,19 @@ jobs:
       script: skip
       deploy:
         provider: script
-        script: .travis/deploy.sh
+        script: .travis/releaseStart.sh
         skip_cleanup: true
         on:
           repo: Hi-Fi/robotframework-httprequestlibrary
           jdk: oraclejdk8
+          branch: develop
     - stage: finishRelease
       addons: skip
       install: skip
       script: skip
       deploy:
         provider: script
-        script: .travis/deploy.sh
+        script: .travis/releaseFinish.sh
         skip_cleanup: true
         on:
           repo: Hi-Fi/robotframework-httprequestlibrary
