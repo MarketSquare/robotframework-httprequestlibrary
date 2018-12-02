@@ -6,10 +6,10 @@ jdk:
  
 stages:
   - test
-  - name: startFeature
-    if: env(startFeature) = true
-  - name: finishFeature
-    if: env(finishFeature) = true
+  - name: startRelease
+    if: env(startRelease) = true
+  - name: finishRelease
+    if: env(finishRelease) = true
   - name: deploySnapshot
     if: branch = develop
   - name: deployRelease
