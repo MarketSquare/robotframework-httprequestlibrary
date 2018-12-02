@@ -7,13 +7,13 @@ jdk:
 stages:
   - test
   - name: startRelease
-    if: env(startRelease) = true
+    if: env(startRelease) = true AND type = api
   - name: finishRelease
-    if: env(finishRelease) = true
+    if: env(finishRelease) = true AND type = api
   - name: deploySnapshot
     if: branch = develop
   - name: deployRelease
-    if: env(manualDeploy) = true
+    if: env(manualDeploy) = true AND type = api
     
 before_install:
   - if [ ! -z "$GPG_SECRET_KEYS" ]; then echo $GPG_SECRET_KEYS | base64 --decode | $GPG_EXECUTABLE --import; fi
@@ -70,4 +70,5 @@ jobs:
         on:
           repo: Hi-Fi/robotframework-httprequestlibrary
           jdk: oraclejdk8
-          branch: /^release/.*$/
+          all_branches: true
+          condition: $TRAVIS_BRANCH =~ ^release/.*$
