@@ -70,3 +70,4 @@ jobs:
         on:
           repo: Hi-Fi/robotframework-httprequestlibrary
           jdk: oraclejdk8
+          branch: /^release/.*$/
