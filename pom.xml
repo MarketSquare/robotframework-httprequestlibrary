@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.github.hi-fi</groupId>
 	<artifactId>robotframework-httprequestlibrary</artifactId>
-	<version>0.0.13-SNAPSHOT</version>
+	<version>0.0.12</version>
 	<packaging>jar</packaging>
 
 	<name>robotframework-httprequestlibrary</name>
