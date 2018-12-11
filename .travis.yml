@@ -7,7 +7,7 @@ jdk:
 stages:
   - test
   - name: deploySnapshot
-    if: branch = master
+    if: branch = develop
   - name: deployRelease
     if: tag IS present
     
@@ -30,7 +30,7 @@ jobs:
         skip_cleanup: true
         on:
           repo: Hi-Fi/robotframework-httprequestlibrary
-          branch: master
+          branch: develop
           jdk: oraclejdk8
     - stage: deployRelease
       addons: skip
