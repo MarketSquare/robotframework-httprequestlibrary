@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.github.hi-fi</groupId>
 	<artifactId>robotframework-httprequestlibrary</artifactId>
-	<version>0.0.12</version>
+	<version>0.0.13-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
 	<name>robotframework-httprequestlibrary</name>
@@ -56,13 +56,14 @@
 	</developers>
 
 	<properties>
-		<maven.compiler.source>1.6</maven.compiler.source>
-		<maven.compiler.target>1.6</maven.compiler.target>
+		<maven.compiler.source>1.8</maven.compiler.source>
+		<maven.compiler.target>1.8</maven.compiler.target>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<keywords.class>HttpRequestLibrary</keywords.class>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<powermock.version>1.6.5</powermock.version>
 		<httpclient.version>0.0.5</httpclient.version>
+		<robotframework.maven.plugin.version>1.5.0</robotframework.maven.plugin.version>
 	</properties>
 
 	<dependencies>
@@ -90,17 +91,17 @@
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>
-			<version>3.7</version>
+			<version>3.8.1</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.logging.log4j</groupId>
 			<artifactId>log4j-api</artifactId>
-			<version>2.11.0</version>
+			<version>2.11.1</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.logging.log4j</groupId>
 			<artifactId>log4j-core</artifactId>
-			<version>2.11.0</version>
+			<version>2.11.1</version>
 		</dependency>
 		<dependency>
 			<groupId>com.google.code.gson</groupId>
@@ -199,7 +200,7 @@
 					<plugin>
 						<groupId>org.robotframework</groupId>
 						<artifactId>robotframework-maven-plugin</artifactId>
-						<version>1.4.8</version>
+						<version>${robotframework.maven.plugin.version}</version>
 						<executions>
 							<execution>
 								<id>html</id>
@@ -275,10 +276,10 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.1</version>
+				<version>3.8.0</version>
 				<configuration>
-					<source>1.5</source>
-					<target>1.5</target>
+					<source>${maven.compiler.source}</source>
+					<target>${maven.compiler.target}</target>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -294,7 +295,7 @@
 			<plugin>
 				<groupId>org.robotframework</groupId>
 				<artifactId>robotframework-maven-plugin</artifactId>
-				<version>1.4.7</version>
+				<version>${robotframework.maven.plugin.version}</version>
 				<executions>
 					<execution>
 						<goals>
@@ -321,7 +322,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-failsafe-plugin</artifactId>
-				<version>2.19.1</version>
+				<version>3.0.0-M2</version>
 				<executions>
 					<execution>
 						<goals>

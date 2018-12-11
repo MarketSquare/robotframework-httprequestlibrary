@@ -6,7 +6,12 @@ public class HttpRequestLibrary extends AnnotationLibrary {
 
 	public HttpRequestLibrary() {
 		super("com/github/hi_fi/httprequestlibrary/keywords/**");
-		System.setProperty("org.apache.commons.logging.Log", "com.github.hi_fi.httprequestlibrary.utils.RobotLogger");
+		try {
+		    Class.forName( "com.github.hi_fi.httprequestlibrary.utils.RobotLogger" );
+		    System.setProperty("org.apache.commons.logging.Log", "com.github.hi_fi.httprequestlibrary.utils.RobotLogger");
+		} catch( ClassNotFoundException e ) {
+		    //Standard logging used in Apache.
+		}
 	}
 
 	@Override
