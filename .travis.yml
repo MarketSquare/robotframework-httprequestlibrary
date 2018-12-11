@@ -2,18 +2,14 @@ language: java
 
 jdk:
   - oraclejdk8
-  - openjdk7
+  - openjdk8
  
 stages:
   - test
-  - name: startRelease
-    if: env(startRelease) = true AND type = api
-  - name: finishRelease
-    if: env(finishRelease) = true AND type = api
   - name: deploySnapshot
-    if: branch = develop
+    if: branch = master
   - name: deployRelease
-    if: env(manualDeploy) = true AND type = api
+    if: tag IS present
     
 before_install:
   - if [ ! -z "$GPG_SECRET_KEYS" ]; then echo $GPG_SECRET_KEYS | base64 --decode | $GPG_EXECUTABLE --import; fi
@@ -34,7 +30,7 @@ jobs:
         skip_cleanup: true
         on:
           repo: Hi-Fi/robotframework-httprequestlibrary
-          branch: develop
+          branch: master
           jdk: oraclejdk8
     - stage: deployRelease
       addons: skip
@@ -46,29 +42,5 @@ jobs:
         skip_cleanup: true
         on:
           repo: Hi-Fi/robotframework-httprequestlibrary
+          tags: true
           jdk: oraclejdk8
-    - stage: startRelease
-      addons: skip
-      install: skip
-      script: skip
-      deploy:
-        provider: script
-        script: .travis/releaseStart.sh
-        skip_cleanup: true
-        on:
-          repo: Hi-Fi/robotframework-httprequestlibrary
-          jdk: oraclejdk8
-          branch: develop
-    - stage: finishRelease
-      addons: skip
-      install: skip
-      script: skip
-      deploy:
-        provider: script
-        script: .travis/releaseFinish.sh
-        skip_cleanup: true
-        on:
-          repo: Hi-Fi/robotframework-httprequestlibrary
-          jdk: oraclejdk8
-          all_branches: true
-          condition: $TRAVIS_BRANCH =~ ^release/.*$
