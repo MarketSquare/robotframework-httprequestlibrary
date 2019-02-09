@@ -29,7 +29,9 @@ With Gradle, library can be use by importing it as a dependency in build.gradle:
     
 If you are not using any dependency management too, you can use the
 [jar-with-dependencies](http://central.maven.org/maven2/com/github/hi-fi/robotframework-httprequestlibrary/0.0.14/robotframework-httprequestlibrary-0.0.14-jar-with-dependencies.jar),
-which contains all required libraries. Running tests with that is done with command ´java -jar robotframework-httprequestlibrary-0.0.14-jar-with-dependencies.jar <test directory>´. 
+which contains all required libraries. Running tests with that is done with command:
+    
+    java -jar robotframework-httprequestlibrary-0.0.14-jar-with-dependencies.jar <test directory> 
 
 Library import in Robot tests can be done with:
 
