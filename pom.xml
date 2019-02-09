@@ -1,4 +1,6 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.github.hi-fi</groupId>
 	<artifactId>robotframework-httprequestlibrary</artifactId>
@@ -64,6 +66,7 @@
 		<powermock.version>1.6.5</powermock.version>
 		<httpclient.version>0.0.5</httpclient.version>
 		<robotframework.maven.plugin.version>1.5.0</robotframework.maven.plugin.version>
+		<robotframework.version>3.1.1</robotframework.version>
 	</properties>
 
 	<dependencies>
@@ -118,6 +121,11 @@
 			<artifactId>jython</artifactId>
 			<version>2.7.0</version>
 		</dependency>
+		<dependency>
+			<groupId>org.robotframework</groupId>
+			<artifactId>robotframework</artifactId>
+			<version>${robotframework.version}</version>
+		</dependency>
 	</dependencies>
 
 	<profiles>
@@ -157,6 +165,12 @@
 						<artifactId>maven-assembly-plugin</artifactId>
 						<version>2.6</version>
 						<configuration>
+							<archive>
+								<manifest>
+									<addClasspath>true</addClasspath>
+									<mainClass>org.robotframework.RobotFramework</mainClass>
+								</manifest>
+							</archive>
 							<descriptorRefs>
 								<descriptorRef>jar-with-dependencies</descriptorRef>
 							</descriptorRefs>
@@ -257,16 +271,16 @@
 							<autoReleaseAfterClose>true</autoReleaseAfterClose>
 						</configuration>
 					</plugin>
-			        <plugin>
-			            <groupId>com.manamind.jgitflow</groupId>
-			            <artifactId>jgitflow-maven-plugin</artifactId>
-			            <version>1.0.0</version>
-			            <configuration>
-                            <pushReleases>true</pushReleases>
-                            <useReleaseProfile>false</useReleaseProfile>
-                            <noDeploy>true</noDeploy>
-			            </configuration>
-			        </plugin>
+					<plugin>
+						<groupId>com.manamind.jgitflow</groupId>
+						<artifactId>jgitflow-maven-plugin</artifactId>
+						<version>1.0.0</version>
+						<configuration>
+							<pushReleases>true</pushReleases>
+							<useReleaseProfile>false</useReleaseProfile>
+							<noDeploy>true</noDeploy>
+						</configuration>
+					</plugin>
 				</plugins>
 			</build>
 		</profile>
