@@ -78,7 +78,7 @@ public class Robot {
         } catch (Exception e) {
             logger.debug(String.format("%s is tested for being dictionary, and result is: %s", testedString,
                     (testedString.contains("{") && testedString.contains("}"))));
-            return (testedString.contains("{") && testedString.contains("}"));
+            return (testedString.trim().startsWith("{") && testedString.trim().endsWith("}"));
         }
     }
     
