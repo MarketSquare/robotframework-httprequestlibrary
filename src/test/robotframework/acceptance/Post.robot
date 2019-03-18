@@ -29,6 +29,25 @@ Post Request With No Dictionary (plain JSON)
     Should Be Equal As Strings  ${resp.status_code}  200
     Should Be Equal As Strings  ${resp.json['data'].replace('\"','"')}  ${data}
     
+Post Request With No Dictionary (plain JSON) inside array (Keycloak)
+    Create Session  httpbin  http://httpbin.org    debug=True
+    Set Test Variable  ${data}  [{"id":"role-id","name":"rolename","scopeParamRequired":false,"composite":false,"clientRole":true,"containerId":"id"}]
+    ${resp}=  Post Request  httpbin  /post  data=${data}
+    Log    ${resp}
+    Should Be Equal As Strings  ${resp.status_code}  200
+    Should Be Equal As Strings  ${resp.json['data'].replace('\"','"')}  ${data}
+    
+Post Request With Dictionary inside array (Keycloak)
+    Create Session  httpbin  http://httpbin.org    debug=True
+    ${testDict}    Create Dictionary    id=role-id    name=rolename    scopeParamRequired=${False}    composite=${False}   clientRole=${True}    containerId=id
+    ${data}    Create List    ${testDict}
+    ${dataAsJson}    Evaluate    json.dumps(${data})    modules=json
+    ${resp}=  Post Request  httpbin  /post  data=${data}
+    Log    ${resp}
+    Should Be Equal As Strings  ${resp.status_code}  200
+    ${respAsJson}    Evaluate    json.dumps(${resp.json['data']})    modules=json
+    Should Be Equal As Strings  ${respAsJson}  ${dataAsJson}
+    
 Post Requests
     Create Session  httpbin  http://httpbin.org
     &{data}=  Create Dictionary  name=bulkan  surname=evcimen
