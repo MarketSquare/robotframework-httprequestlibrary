@@ -72,14 +72,17 @@ public class Robot {
     }
 
     public static Boolean isDictionary(String testedString) {
-        try {
-            new Gson().fromJson(testedString, Map.class);
-            return !testedString.contains("\"");
-        } catch (Exception e) {
-            logger.debug(String.format("%s is tested for being dictionary, and result is: %s", testedString,
-                    (testedString.contains("{") && testedString.contains("}"))));
-            return (testedString.trim().startsWith("{") && testedString.trim().endsWith("}"));
+        if (testedString != null) {
+            try {
+                new Gson().fromJson(testedString, Map.class);
+                return !testedString.contains("\"");
+            } catch (Exception e) {
+                logger.debug(String.format("%s is tested for being dictionary, and result is: %s", testedString,
+                        (testedString.contains("{") && testedString.contains("}"))));
+                return (testedString.trim().startsWith("{") && testedString.trim().endsWith("}"));
+            }
         }
+        return false;
     }
     
     protected static ThreadLocal<PythonInterpreter> pythonInterpreter = new ThreadLocal<PythonInterpreter>() {

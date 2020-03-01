@@ -29,15 +29,15 @@ Put Requests
     Dictionary Should Contain Value  ${resp.json['form']}  bulkan
     Dictionary Should Contain Value  ${resp.json['form']}  evcimen
     
- Put Request With Redirection
-    Create Session  jigsaw  http://jigsaw.w3.org    debug=True
-    ${resp}=  Put Request  jigsaw  /HTTP/300/302.html
-    Should Be Equal As Strings  ${resp.status_code}  200
-    ${resp}=  Put Request  jigsaw  /HTTP/300/302.html  allow_redirects=${true}
+Put Request With Redirection
+    Create Session  httpbin  http://httpbin.org    debug=True
+    &{params}=  Create Dictionary  url=https://httpbin.org
+    ${resp}=  Put Request  httpbin  /redirect-to    params=${params}
     Should Be Equal As Strings  ${resp.status_code}  200
 
 Put Request Without Redirection
-    Create Session  jigsaw  http://jigsaw.w3.org
-    ${resp}=  Put Request  jigsaw  /HTTP/300/302.html  allow_redirects=${false}
+    Create Session  httpbin  http://httpbin.org
+    &{params}=  Create Dictionary  url=https://httpbin.org
+    ${resp}=  Put Request  httpbin  /redirect-to    params=${params}  allow_redirects=${false}
     ${status}=  Convert To String  ${resp.status_code}
     Should Start With  ${status}  30

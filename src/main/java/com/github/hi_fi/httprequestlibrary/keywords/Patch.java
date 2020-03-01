@@ -2,6 +2,7 @@ package com.github.hi_fi.httprequestlibrary.keywords;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.robotframework.javalib.annotation.ArgumentNames;
 import org.robotframework.javalib.annotation.RobotKeyword;
@@ -22,21 +23,16 @@ public class Patch {
 			 + "``headers`` a dictionary of headers to use with the request\n\n"
 			 + "``files`` a dictionary of file names containing file data to PATCH to the server\n\n"
 			 + "\n\n"
-			 + "``allow_redirects`` Boolean. Set to True if redirect following is allowed.\n\n"
+			 + "``allow_redirects`` Boolean. Set to False if redirect following is not allowed.\n\n"
 			 + "``timeout`` connection timeout")
-	@ArgumentNames({ "alias", "uri", "data={}", "headers={}", "files={}", "allow_redirects=False", "timeout=0" })
-	public ResponseData patchRequest(String alias, String uri, String... params) {
+	@ArgumentNames({ "alias", "uri", "data=", "headers=", "files=", "allow_redirects=True", "timeout=0" })
+	public ResponseData patchRequest(String alias, String uri, Object dataList, Map<String, Object> headersSetup, Map<String, Object> filesSetup, Boolean allowRedirects, Integer timeout) {
 		RestClient rc = new RestClient();
-		Object dataList = (String) Robot.getParamsValue(params, 0, "");
+		Map<String,String> headers = headersSetup != null ? headersSetup.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, e -> (String)e.getValue())): new HashMap<String, String>();
+        Map<String,String> files = filesSetup != null ? filesSetup.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, e -> (String)e.getValue())): new HashMap<String, String>();
 		if (Robot.isDictionary(dataList.toString())) {
-			dataList = (Map<String, String>) Robot.getParamsValue(params, 0,
-					(Map<String, String>) new HashMap<String, String>());
+			dataList = (Map<String, Object>) Robot.parseRobotDictionary(dataList.toString());
 		}
-		Map<String, String> headers = Robot.getParamsValue(params, 1,
-				(Map<String, String>) new HashMap<String, String>());
-		Map<String, String> files = Robot.getParamsValue(params, 2,
-				(Map<String, String>) new HashMap<String, String>());
-		Boolean allowRedirects = Boolean.parseBoolean(Robot.getParamsValue(params, 3, "false"));
 		rc.makePatchRequest(alias, uri, dataList, headers, files, allowRedirects);
 		return rc.getSession(alias).getResponseData();
 	}
