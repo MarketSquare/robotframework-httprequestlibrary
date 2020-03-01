@@ -23,9 +23,8 @@ public class Assert {
 
 	@RobotKeyword("Checks that latest response from given connection contains given expected value. Default check is case sensitive.")
 	@ArgumentNames({"alias","expected content", "case_sensitive=False"})
-	public void responseShouldContain(String alias, String expectedContent, String... params) {
+	public void responseShouldContain(String alias, String expectedContent, Boolean caseSensitive) {
 		RestClient rc = new RestClient();
-		Boolean caseSensitive = Boolean.parseBoolean(Robot.getParamsValue(params, 0, "false"));
 		String actualContent = rc.getSession(alias).getResponseBody();
 		String testActualContent = caseSensitive ? actualContent : actualContent.toUpperCase();
 		String testExpectedContent = caseSensitive ? expectedContent : expectedContent.toUpperCase();

@@ -20,14 +20,11 @@ public class Options {
 			 + "``uri`` to send the OPTIONS request to\n\n"
 			 + "``headers`` a dictionary of headers to use with the request\n\n"
 			 + "\n\n"
-			 + "``allow_redirects`` Boolean. Set to True if redirect following is allowed.\n\n"
+			 + "``allow_redirects`` Boolean. Set to False if redirect following is not allowed.\n\n"
 			 + "``timeout`` connection timeout")
-	@ArgumentNames({ "alias", "uri", "headers={}", "allow_redirects=False", "timeout=0" })
-	public ResponseData optionsRequest(String alias, String uri, String... params) {
+	@ArgumentNames({ "alias", "uri", "headers=", "allow_redirects=True", "timeout=0" })
+	public ResponseData optionsRequest(String alias, String uri, Map<String, String> headers, Boolean allowRedirects, Integer timeout) {
 		RestClient rc = new RestClient();
-		Map<String, String> headers = Robot.getParamsValue(params, 0,
-				(Map<String, String>) new HashMap<String, String>());
-		Boolean allowRedirects = Boolean.parseBoolean(Robot.getParamsValue(params, 1, "true"));
 		rc.makeOptionsRequest(alias, uri, headers, allowRedirects);
 		return rc.getSession(alias).getResponseData();
 	}

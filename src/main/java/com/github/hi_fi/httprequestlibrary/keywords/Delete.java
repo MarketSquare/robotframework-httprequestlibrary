@@ -2,6 +2,7 @@ package com.github.hi_fi.httprequestlibrary.keywords;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.robotframework.javalib.annotation.ArgumentNames;
 import org.robotframework.javalib.annotation.RobotKeyword;
@@ -22,21 +23,16 @@ public class Delete {
 			 + "``params`` url parameters to append to the uri\n\n"
 			 + "``headers`` a dictionary of headers to use with the request\n\n"
 			 + "\n\n"
-			 + "``allow_redirects`` Boolean. Set to True if redirect following is allowed.\n\n"
+			 + "``allow_redirects`` Boolean. Set to False if redirect following is not allowed.\n\n"
 			 + "``timeout`` connection timeout")
-	@ArgumentNames({ "alias", "uri", "data={}", "params={}", "headers={}", "allow_redirects=False", "timeout=0" })
-	public ResponseData deleteRequest(String alias, String uri, String... params) {
+	@ArgumentNames({ "alias", "uri", "data=''", "params=", "headers=", "allow_redirects=True", "timeout=0" })
+	public ResponseData deleteRequest(String alias, String uri, Object dataList, Map<String, Object> paramSetup, Map<String, Object> headersSetup, Boolean allowRedirects, Integer timeout) {
 		RestClient rc = new RestClient();
-		Object dataList = (String) Robot.getParamsValue(params, 0, "");
+		Map<String,String> headers = headersSetup != null ? headersSetup.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, e -> (String)e.getValue())): new HashMap<String, String>();
+        Map<String,String> paramList = paramSetup != null ? paramSetup.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, e -> (String)e.getValue())): new HashMap<String, String>();
 		if (Robot.isDictionary(dataList.toString())) {
-			dataList = (Map<String, String>) Robot.getParamsValue(params, 0,
-					(Map<String, String>) new HashMap<String, String>());
+			dataList = (Map<String, Object>) Robot.parseRobotDictionary(dataList.toString());
 		}
-		Map<String, String> paramList = Robot.getParamsValue(params, 1,
-				(Map<String, String>) new HashMap<String, String>());
-		Map<String, String> headers = Robot.getParamsValue(params, 2,
-				(Map<String, String>) new HashMap<String, String>());
-		Boolean allowRedirects = Boolean.parseBoolean(Robot.getParamsValue(params, 3, "true"));
 		rc.makeDeleteRequest(alias, uri, dataList, paramList, headers, allowRedirects);
 		return rc.getSession(alias).getResponseData();
 	}

@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import org.robotframework.javalib.annotation.ArgumentNames;
 import org.robotframework.javalib.annotation.RobotKeyword;
@@ -29,17 +30,18 @@ public class Session {
 			 + "``proxy`` Dictionary that contains proxy information. Only one proxy supported per session. Dictionary should contain at least following keys: *protocol*, *host* and *port* of proxy. It can also contain *username* and *password*\n\n"
 			 + "``verify`` Whether the SSL cert will be verified. A CA_BUNDLE path can also be provided.\n\n"
 			 + "``debug`` Enable http verbosity option more information. Note that this is not bound to session, but for the state of system. So if another session with debug=False is created, the earlier with debug=True is not printing debug from HTTPclient anymore\n\n")
-	@ArgumentNames({ "alias", "url", "headers={}", "cookies=None", "auth=None", "timeout=None", "proxy=None",
+	@ArgumentNames({ "alias", "url", "headers=", "cookies=", "auth=", "timeout=0", "proxy=",
 			"verify=False", "debug=False" })
-	public void createSession(String alias, String url, String... params) {
+	public void createSession(String alias, String url, Map<String, Object> headersSetup, String cookies, List<String> authConfig, Integer timeout, Map<String, Object> proxySetup, String verify, Boolean debug) {
 		RestClient rc = new RestClient();
-		Map<String, String> headers = Robot.getParamsValue(params, 0, new HashMap<String, String>());
-		Proxy proxy = new Proxy(Robot.getParamsValue(params, 4, new HashMap<String, String>()));
-		String verify = Robot.getParamsValue(params, 5, "False");
-		Boolean debug = Boolean.parseBoolean(Robot.getParamsValue(params, 6, "False"));
+		Map<String,String> proxyConfig = proxySetup != null ? proxySetup.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, e -> (String)e.getValue())): new HashMap<String, String>();
+		Map<String,String> headers = headersSetup != null ? headersSetup.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, e -> (String)e.getValue())): new HashMap<String, String>();
+		authConfig = authConfig != null ? authConfig : new ArrayList<String>();
+		Proxy proxy = new Proxy(proxyConfig);
 		RobotLogger.setDebugToAll(debug);
 		Authentication auth = Authentication
-				.getAuthentication(Robot.getParamsValue(params, 2, (List<String>) new ArrayList<String>()));
+				.getAuthentication(authConfig);
+
 		rc.createSession(alias, url, headers, auth, verify, debug, proxy);
 	}
 
@@ -53,17 +55,17 @@ public class Session {
 			 + "``proxy`` Dictionary that contains proxy information. Only one proxy supported per session. Dictionary should contain at least following keys: *protocol*, *host* and *port* of proxy. It can also contain *username* and *password*\n\n"
 			 + "``verify`` Whether the SSL cert will be verified. A CA_BUNDLE path can also be provided.\n\n"
 			 + "``debug`` Enable http verbosity option more information. Note that this is not bound to session, but for the state of system. So if another session with debug=False is created, the earlier with debug=True is not printing debug from HTTPclient anymore\n\n")
-	@ArgumentNames({ "alias", "url", "headers={}", "cookies=None", "auth=None", "timeout=None", "proxy=None",
+	@ArgumentNames({ "alias", "url", "headers=", "cookies=", "auth=", "timeout=0", "proxy=",
 			"verify=False", "debug=False" })
-	public void createDigestSession(String alias, String url, String... params) {
+	public void createDigestSession(String alias, String url, Map<String, Object> headersSetup, String cookies, List<String> authConfig, Integer timeout, Map<String, Object> proxySetup, String verify, Boolean debug) {
 		RestClient rc = new RestClient();
-		Map<String, String> headers = Robot.getParamsValue(params, 0, new HashMap<String, String>());
-		Proxy proxy = new Proxy(Robot.getParamsValue(params, 4, new HashMap<String, String>()));
-		String verify = Robot.getParamsValue(params, 5, "False");
-		Boolean debug = Boolean.parseBoolean(Robot.getParamsValue(params, 6, "False"));
+		Map<String,String> proxyConfig = proxySetup != null ? proxySetup.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, e -> (String)e.getValue())): new HashMap<String, String>();
+        Map<String,String> headers = headersSetup != null ? headersSetup.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, e -> (String)e.getValue())): new HashMap<String, String>();
+        authConfig = authConfig != null ? authConfig : new ArrayList<String>();
+		Proxy proxy = new Proxy(proxyConfig);
 		RobotLogger.setDebugToAll(debug);
-		Authentication auth = Authentication.getAuthentication(
-				Robot.getParamsValue(params, 2, (List<String>) new ArrayList<String>()), Authentication.Type.DIGEST);
+		Authentication auth = Authentication
+				.getAuthentication(authConfig, Authentication.Type.DIGEST);
 		rc.createSession(alias, url, headers, auth, verify, debug, proxy);
 	}
 
