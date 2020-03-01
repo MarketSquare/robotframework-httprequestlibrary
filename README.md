@@ -6,9 +6,9 @@ Robot Framework's library to test REST interfaces.
 Library is mostly following structure of [Requests-library](https://github.com/bulkan/robotframework-requests).
 
 * More information about this library can be found in the
-  [Keyword Documentation](https://repo1.maven.org/maven2/com/github/hi-fi/robotframework-httprequestlibrary/0.0.15/robotframework-httprequestlibrary-0.0.15.html).
+  [Keyword Documentation](https://repo1.maven.org/maven2/com/github/hi-fi/robotframework-httprequestlibrary/0.0.16/robotframework-httprequestlibrary-0.0.16.html).
 * For keyword completion in RIDE you can download this
-  [Library Specs](https://repo1.maven.org/maven2/com/github/hi-fi/robotframework-httprequestlibrary/0.0.15/robotframework-httprequestlibrary-0.0.15.xml)
+  [Library Specs](https://repo1.maven.org/maven2/com/github/hi-fi/robotframework-httprequestlibrary/0.0.16/robotframework-httprequestlibrary-0.0.16.xml)
   and place it in your PYTHONPATH.
 
 Usage
@@ -20,18 +20,18 @@ your pom.xml:
     <dependency>
         <groupId>com.github.hi-fi</groupId>
         <artifactId>robotframework-httprequestlibrary</artifactId>
-        <version>0.0.15</version>
+        <version>0.0.16</version>
     </dependency>
     
 With Gradle, library can be use by importing it as a dependency in build.gradle:
 
-    runtime('com.github.hi-fi:robotframework-httprequestlibrary:0.0.15')
+    runtime('com.github.hi-fi:robotframework-httprequestlibrary:0.0.16')
     
 If you are not using any dependency management too, you can use the
-[jar-with-dependencies](https://repo1.maven.org/maven2/com/github/hi-fi/robotframework-httprequestlibrary/0.0.15/robotframework-httprequestlibrary-0.0.15-jar-with-dependencies.jar),
+[jar-with-dependencies](https://repo1.maven.org/maven2/com/github/hi-fi/robotframework-httprequestlibrary/0.0.16/robotframework-httprequestlibrary-0.0.16-jar-with-dependencies.jar),
 which contains all required libraries. Running tests with that is done with command:
     
-    java -jar robotframework-httprequestlibrary-0.0.15-jar-with-dependencies.jar <test directory> 
+    java -jar robotframework-httprequestlibrary-0.0.16-jar-with-dependencies.jar <test directory> 
 
 Library import in Robot tests can be done with:
 
