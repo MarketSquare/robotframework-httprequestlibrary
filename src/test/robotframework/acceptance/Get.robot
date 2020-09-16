@@ -4,15 +4,16 @@ Force Tags    GET
 
 *** Test Cases ***
 Get Requests
-    Create Session  google  http://www.google.com
-    Create Session  httpbin     http://httpbin.org
+    Log    ${testServer}
+    Create Session  google  https://www.google.com
+    Create Session  httpbin     ${testServer} 
     ${resp}=  Get Request  google  /
     Should Be Equal As Strings  ${resp.status_code}  200
     ${resp}=  Get Request  httpbin  /
     Should Be Equal As Strings  ${resp.status_code}  200
 
 Get Requests with Url Parameters
-    Create Session  httpbin     http://httpbin.org
+    Create Session  httpbin     ${testServer} 
     &{params}=   Create Dictionary   key=value     key2=value2
     ${resp}=     Get Request  httpbin  /get    params=${params}
     Should Be Equal As Strings  ${resp.status_code}  200
@@ -37,14 +38,14 @@ Get With Auth
     Should Be Equal As Strings  ${resp.json['authenticated']}  True
 
 Get Request With Redirection
-    Create Session  httpbin  http://httpbin.org    debug=True
+    Create Session  httpbin  ${testServer}     debug=True
     ${resp}=  Get Request  httpbin  /redirect/1
     Should Be Equal As Strings  ${resp.status_code}  200
     ${resp}=  Get Request  httpbin  /redirect/1  allow_redirects=${true}
     Should Be Equal As Strings  ${resp.status_code}  200
 
 Get Request Without Redirection
-    Create Session  httpbin  http://httpbin.org
+    Create Session  httpbin  ${testServer} 
     ${resp}=  Get Request  httpbin  /redirect/1  allow_redirects=${false}
     ${status}=  Convert To String  ${resp.status_code}
     Should Start With  ${status}  30
