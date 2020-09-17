@@ -1,8 +1,8 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>com.github.MarketSquare</groupId>
+	<groupId>com.github.marketsquare</groupId>
 	<artifactId>robotframework-httprequestlibrary</artifactId>
-	<version>0.0.17-SNAPSHOT</version>
+	<version>0.0.18-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
 	<name>robotframework-httprequestlibrary</name>
@@ -360,16 +360,6 @@
 							<serverId>ossrh</serverId>
 							<nexusUrl>https://oss.sonatype.org/</nexusUrl>
 							<autoReleaseAfterClose>true</autoReleaseAfterClose>
-						</configuration>
-					</plugin>
-					<plugin>
-						<groupId>com.manamind.jgitflow</groupId>
-						<artifactId>jgitflow-maven-plugin</artifactId>
-						<version>1.0.0</version>
-						<configuration>
-							<pushReleases>true</pushReleases>
-							<useReleaseProfile>false</useReleaseProfile>
-							<noDeploy>true</noDeploy>
 						</configuration>
 					</plugin>
 				</plugins>
