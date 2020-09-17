@@ -63,8 +63,14 @@
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<powermock.version>1.6.5</powermock.version>
 		<httpclient.version>0.0.7</httpclient.version>
-		<robotframework.maven.plugin.version>1.6.0</robotframework.maven.plugin.version>
+		<robotframework.maven.plugin.version>1.7.2</robotframework.maven.plugin.version>
 		<robotframework.version>3.2.2</robotframework.version>
+		<environment>default</environment>
+		<defaultTestServer>https://httpbin.org</defaultTestServer>
+		<defaultTestServerPort>443</defaultTestServerPort>
+		<defaultProxyPort>1234</defaultProxyPort>
+		<robotLogLevel>DEBUG</robotLogLevel>
+		<robotDefaultDisplayLogLevel>INFO</robotDefaultDisplayLogLevel>
 	</properties>
 
 	<dependencies>
@@ -127,6 +133,86 @@
 	</dependencies>
 
 	<profiles>
+		<profile>
+			<id>localRun</id>
+			<properties>
+				<environment>local</environment>
+				<localTestServer>http://localhost</localTestServer>
+			</properties>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>build-helper-maven-plugin</artifactId>
+						<version>3.2.0</version>
+						<executions>
+							<execution>
+								<id>reserve-network-port</id>
+								<goals>
+									<goal>reserve-network-port</goal>
+								</goals>
+								<phase>process-resources</phase>
+								<configuration>
+									<portNames>
+										<portName>localTestServerPort</portName>
+										<portName>localProxyPort</portName>
+									</portNames>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>io.fabric8</groupId>
+						<artifactId>docker-maven-plugin</artifactId>
+						<version>0.34.0</version>
+						<executions>
+							<execution>
+								<id>prepare-it-test-server</id>
+								<goals>
+									<goal>start</goal>
+								</goals>
+								<configuration>
+									<images>
+										<image>
+											<name>kennethreitz/httpbin:latest</name>
+											<alias>httpbin</alias>
+											<run>
+												<ports>
+													<port>localTestServerPort:80</port>
+												</ports>
+												<wait>
+													<log>(?s).*Booting worker with pid.*</log>
+													<time>10000</time>
+												</wait>
+											</run>
+										</image>
+										<image>
+											<name>sameersbn/squid:3.5.27-2</name>
+											<alias>proxy</alias>
+											<run>
+												<ports>
+													<port>localProxyPort:3128</port>
+												</ports>
+												<wait>
+													<log>(?s).*Accepting HTTP Socket connections at.*</log>
+													<time>10000</time>
+												</wait>
+											</run>
+										</image>
+									</images>
+								</configuration>
+							</execution>
+							<execution>
+								<id>remove-it-test-server</id>
+								<goals>
+									<goal>stop</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
 		<profile>
 			<id>deploy</id>
 			<build>
@@ -312,75 +398,6 @@
 				<version>3.0.0</version>
 			</plugin>
 			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>build-helper-maven-plugin</artifactId>
-				<version>3.2.0</version>
-				<executions>
-					<execution>
-						<id>reserve-network-port</id>
-						<goals>
-							<goal>reserve-network-port</goal>
-						</goals>
-						<phase>process-resources</phase>
-						<configuration>
-							<portNames>
-								<portName>httpbin.publish.port</portName>
-								<portName>local.proxy.port</portName>
-							</portNames>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>io.fabric8</groupId>
-				<artifactId>docker-maven-plugin</artifactId>
-				<version>0.34.0</version>
-				<executions>
-					<execution>
-						<id>prepare-it-test-server</id>
-						<goals>
-							<goal>start</goal>
-						</goals>
-						<configuration>
-							<images>
-								<image>
-									<name>kennethreitz/httpbin:latest</name>
-									<alias>httpbin</alias>
-									<run>
-										<ports>
-											<port>httpbin.publish.port:80</port>
-										</ports>
-										<wait>
-											<log>(?s).*Booting worker with pid.*</log>
-											<time>10000</time>
-										</wait>
-									</run>
-								</image>
-								<image>
-									<name>sameersbn/squid:3.5.27-2</name>
-									<alias>proxy</alias>
-									<run>
-										<ports>
-											<port>local.proxy.port:3128</port>
-										</ports>
-										<wait>
-											<log>(?s).*Accepting HTTP Socket connections at.*</log>
-											<time>10000</time>
-										</wait>
-									</run>
-								</image>
-							</images>
-						</configuration>
-					</execution>
-					<execution>
-						<id>remove-it-test-server</id>
-						<goals>
-							<goal>stop</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
 				<groupId>org.robotframework</groupId>
 				<artifactId>robotframework-maven-plugin</artifactId>
 				<version>${robotframework.maven.plugin.version}</version>
@@ -390,16 +407,20 @@
 							<goal>acceptance-test</goal>
 						</goals>
 						<configuration>
-							<logLevel>TRACE:INFO</logLevel>
+							<logLevel>${robotLogLevel}:${robotDefaultDisplayLogLevel}</logLevel>
 							<extraPathDirectories>
 								<extraPathDirectory>target/robotframework-httprequestlibrary-${project.version}.jar</extraPathDirectory>
 							</extraPathDirectories>
 							<nonCriticalTags>
 								<nonCriticalTag>Non-Critical</nonCriticalTag>
+								<nonCriticalTag>Non-working_on_${environment}</nonCriticalTag>
 							</nonCriticalTags>
 							<variables>
-								<variable>testServer:http://localhost:${httpbin.publish.port}</variable>
-								<variable>proxyPort:${local.proxy.port}</variable>
+								<variable>environment:${environment}</variable>
+								<variable>localTestServer:${localTestServer}:${localTestServerPort}</variable>
+								<variable>localProxyPort:${localProxyPort}</variable>
+								<variable>defaultTestServer:${defaultTestServer}:${defaultTestServerPort}</variable>
+								<variable>defaultProxyPort:${defaultProxyPort}</variable>
 							</variables>
 						</configuration>
 					</execution>

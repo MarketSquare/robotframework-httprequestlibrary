@@ -91,6 +91,7 @@ public class Robot {
         protected PythonInterpreter initialValue() {
             PythonInterpreter pythonInterpreter = new PythonInterpreter();
             pythonInterpreter.exec("from robot.api import logger");
+            pythonInterpreter.exec("from robot.libraries.BuiltIn import BuiltIn");
             return pythonInterpreter;
         }
     };

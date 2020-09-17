@@ -9,11 +9,13 @@ Head Request
     Should Be Equal As Strings  ${resp.status_code}  200
     
 Head Request With Redirection
+    [Tags]    Non-working_on_default
     Create Session  httpbin  ${testServer} 
     ${resp}=  Head Request  httpbin  /redirect/1  allow_redirects=${True}
     Should Be Equal As Strings  ${resp.status_code}  200
 
 Head Request Without Redirection
+    [Tags]    Non-working_on_default
     Create Session  httpbin  ${testServer} 
     ${resp}=  Head Request  httpbin  /redirect/1
     ${status}=  Convert To String  ${resp.status_code}

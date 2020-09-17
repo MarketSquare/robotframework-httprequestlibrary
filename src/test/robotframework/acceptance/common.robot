@@ -5,7 +5,7 @@ Library    String
 Library    OperatingSystem
 
 *** Variables ***
-${testServer}    http://httpbin.org
-${proxyPort}     8080
+${testServer}    ${${environment}TestServer}
+${proxyPort}     ${${environment}ProxyPort}
 
 *** Keywords ***

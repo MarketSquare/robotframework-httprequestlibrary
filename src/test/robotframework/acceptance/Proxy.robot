@@ -8,6 +8,7 @@ Get Requests Through Non-existent Proxy
     Run Keyword And Expect Error    *Connection refused*    Get Request  google  /
     
 Get Request Through Local Squid Proxy
+    [Tags]    Non-critical
     &{proxy}    Create Dictionary    host=127.0.0.1    port=${proxyPort}
     Create Session  google  https://www.google.com    proxy=${proxy}
     ${resp}=  Get Request  google  /

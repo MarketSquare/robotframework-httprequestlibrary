@@ -125,6 +125,7 @@ Post Request With File
     Dictionary Should Contain Key  ${file}  two
     
 Post Request With Redirection
+    [Tags]    Non-working_on_default
     Create Session  httpbin  ${testServer}     debug=True
     &{params}=  Create Dictionary  url=https://httpbin.org
     ${resp}=  Post Request  httpbin  /redirect-to    params=${params}
@@ -133,6 +134,7 @@ Post Request With Redirection
     Should Be Equal As Strings  ${resp.status_code}  200
 
 Post Request Without Redirection
+    [Tags]    Non-working_on_default
     Create Session  httpbin  ${testServer}     debug=True
     &{params}=  Create Dictionary  url=https://httpbin.org
     ${resp}=  Post Request  httpbin  /redirect-to    params=${params}  allow_redirects=${False}

@@ -30,12 +30,14 @@ Put Requests
     Dictionary Should Contain Value  ${resp.json['form']}  evcimen
     
 Put Request With Redirection
+    [Tags]    Non-working_on_default
     Create Session  httpbin  ${testServer}     debug=True
     &{params}=  Create Dictionary  url=https://httpbin.org
     ${resp}=  Put Request  httpbin  /redirect-to    params=${params}
     Should Be Equal As Strings  ${resp.status_code}  200
 
 Put Request Without Redirection
+    [Tags]    Non-working_on_default
     Create Session  httpbin  ${testServer} 
     &{params}=  Create Dictionary  url=https://httpbin.org
     ${resp}=  Put Request  httpbin  /redirect-to    params=${params}  allow_redirects=${false}

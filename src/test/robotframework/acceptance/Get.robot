@@ -38,6 +38,7 @@ Get With Auth
     Should Be Equal As Strings  ${resp.json['authenticated']}  True
 
 Get Request With Redirection
+    [Tags]    Non-working_on_default
     Create Session  httpbin  ${testServer}     debug=True
     ${resp}=  Get Request  httpbin  /redirect/1
     Should Be Equal As Strings  ${resp.status_code}  200
@@ -45,6 +46,7 @@ Get Request With Redirection
     Should Be Equal As Strings  ${resp.status_code}  200
 
 Get Request Without Redirection
+    [Tags]    Non-working_on_default
     Create Session  httpbin  ${testServer} 
     ${resp}=  Get Request  httpbin  /redirect/1  allow_redirects=${false}
     ${status}=  Convert To String  ${resp.status_code}

@@ -10,6 +10,7 @@ Options Request
     Dictionary Should Contain Key  ${resp.headers}  Allow
 
 Options Request With Redirection
+    [Tags]    Non-working_on_default
     Create Session  httpbin  ${testServer} 
     ${resp}=  Options Request  httpbin  /redirect/1
     Should Be Equal As Strings  ${resp.status_code}  200
