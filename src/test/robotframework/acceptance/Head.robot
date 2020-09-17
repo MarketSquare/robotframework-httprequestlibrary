@@ -4,17 +4,19 @@ Force Tags    HEAD
 
 *** Test Cases ***
 Head Request
-    Create Session  httpbin  http://httpbin.org
+    Create Session  httpbin  ${testServer} 
     ${resp}=  Head Request  httpbin  /headers
     Should Be Equal As Strings  ${resp.status_code}  200
     
 Head Request With Redirection
-    Create Session  httpbin  http://httpbin.org
+    [Tags]    Non-working_on_default
+    Create Session  httpbin  ${testServer} 
     ${resp}=  Head Request  httpbin  /redirect/1  allow_redirects=${True}
     Should Be Equal As Strings  ${resp.status_code}  200
 
 Head Request Without Redirection
-    Create Session  httpbin  http://httpbin.org
+    [Tags]    Non-working_on_default
+    Create Session  httpbin  ${testServer} 
     ${resp}=  Head Request  httpbin  /redirect/1
     ${status}=  Convert To String  ${resp.status_code}
     Should Start With  ${status}  30

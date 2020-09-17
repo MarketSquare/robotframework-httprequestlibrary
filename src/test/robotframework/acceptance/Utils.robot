@@ -57,7 +57,7 @@ Json Parsing Tests With List
 *** Keywords ***
 Setup Suite
     Comment    Define json variable.
-    Create Session  httpbin  http://httpbin.org
+    Create Session  httpbin  ${testServer} 
     &{var}=    Create Dictionary    key_one=true    key_two=this is a test string
     Set Suite Variable    ${var}
     ${resp}=    Get Request    httpbin    /get    params=${var}

@@ -4,7 +4,7 @@ Force Tags    PATCH
 
 *** Test Cases ***
 Patch Requests
-    Create Session    httpbin    http://httpbin.org
+    Create Session    httpbin    ${testServer} 
     &{data}=    Create Dictionary    name=bulkan    surname=evcimen
     &{headers}=    Create Dictionary    Content-Type=application/x-www-form-urlencoded
     ${resp}=    Patch Request    httpbin    /patch    data=${data}    headers=${headers}
