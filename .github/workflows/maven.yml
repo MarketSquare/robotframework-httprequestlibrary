@@ -12,7 +12,7 @@ jobs:
 
         include:
           - os: ubuntu-latest
-            mavenProfile: "-Plocal" # Running test on Linux using Docker endpoints
+            mavenProfile: "-PlocalRun" # Running test on Linux using Docker endpoints
 
     runs-on: ${{ matrix.os }}
     name: Test on ${{ matrix.os }} with Java ${{ matrix.java-version }}
