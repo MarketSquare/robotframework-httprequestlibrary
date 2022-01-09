@@ -1,21 +1,21 @@
 [INFO] Scanning for projects...
 [INFO] 
 [INFO] -----< com.github.marketsquare:robotframework-httprequestlibrary >------
-[INFO] Building robotframework-httprequestlibrary 0.0.18
+[INFO] Building robotframework-httprequestlibrary 0.0.19
 [INFO] --------------------------------[ jar ]---------------------------------
 [INFO] 
 [INFO] --- maven-dependency-plugin:3.2.0:tree (default-cli) @ robotframework-httprequestlibrary ---
-[INFO] com.github.marketsquare:robotframework-httprequestlibrary:jar:0.0.18
+[INFO] com.github.marketsquare:robotframework-httprequestlibrary:jar:0.0.19
 [INFO] +- org.robotframework:javalib-core:jar:2.0.3:compile
 [INFO] |  \- org.apache.commons:commons-collections4:jar:4.4:compile
 [INFO] +- junit:junit:jar:4.13.2:test
 [INFO] |  \- org.hamcrest:hamcrest-core:jar:1.3:test
-[INFO] +- com.github.hi-fi:httpclient:jar:0.0.7:compile
-[INFO] |  +- org.apache.httpcomponents:httpclient:jar:4.5.12:compile
+[INFO] +- com.github.hi-fi:httpclient:jar:0.0.8:compile
+[INFO] |  +- org.apache.httpcomponents:httpclient:jar:4.5.13:compile
 [INFO] |  |  +- org.apache.httpcomponents:httpcore:jar:4.4.13:compile
 [INFO] |  |  \- commons-codec:commons-codec:jar:1.11:compile
-[INFO] |  +- org.apache.httpcomponents:httpmime:jar:4.5.12:compile
-[INFO] |  \- org.apache.httpcomponents:httpclient-win:jar:4.5.12:compile
+[INFO] |  +- org.apache.httpcomponents:httpmime:jar:4.5.13:compile
+[INFO] |  \- org.apache.httpcomponents:httpclient-win:jar:4.5.13:compile
 [INFO] |     +- net.java.dev.jna:jna:jar:4.5.2:compile
 [INFO] |     \- net.java.dev.jna:jna-platform:jar:4.5.2:compile
 [INFO] +- commons-io:commons-io:jar:2.11.0:compile
@@ -29,6 +29,6 @@
 [INFO] ------------------------------------------------------------------------
 [INFO] BUILD SUCCESS
 [INFO] ------------------------------------------------------------------------
-[INFO] Total time:  1.116 s
-[INFO] Finished at: 2022-01-08T20:30:47+02:00
+[INFO] Total time:  0.929 s
+[INFO] Finished at: 2022-01-09T17:00:59+02:00
 [INFO] ------------------------------------------------------------------------

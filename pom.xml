@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.github.marketsquare</groupId>
 	<artifactId>robotframework-httprequestlibrary</artifactId>
-	<version>0.0.19-SNAPSHOT</version>
+	<version>0.0.19</version>
 	<packaging>jar</packaging>
 
 	<name>robotframework-httprequestlibrary</name>
@@ -62,7 +62,7 @@
 		<keywords.class>HttpRequestLibrary</keywords.class>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<powermock.version>1.6.5</powermock.version>
-		<httpclient.version>0.0.7</httpclient.version>
+		<httpclient.version>0.0.8</httpclient.version>
 		<robotframework.maven.plugin.version>2.1.0</robotframework.maven.plugin.version>
 		<robotframework.version>4.1.2</robotframework.version>
 		<environment>default</environment>
